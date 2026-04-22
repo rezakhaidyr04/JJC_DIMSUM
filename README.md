@@ -9,6 +9,25 @@
 
 ## About Laravel
 
+## Akun Default Aplikasi
+
+Berikut akun default yang dibuat dari seeder `UserRoleSeeder`:
+
+1. Owner (read-only)
+- Email: `owner@jjc-dimsum.test`
+- Password: `password123`
+
+2. Karyawan (akses CRUD)
+- Email: `karyawan@jjc-dimsum.test`
+- Password: `password123`
+
+Jalankan perintah berikut jika akun belum ada:
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
