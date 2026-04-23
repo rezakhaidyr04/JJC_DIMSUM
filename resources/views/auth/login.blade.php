@@ -51,6 +51,28 @@
             padding: 28px 20px;
         }
 
+        .auth-logo-wrap {
+            width: 88px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto 10px;
+            border-radius: var(--logo-frame-radius, 16px);
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 6px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .auth-logo-wrap.is-circle { --logo-frame-radius: 999px; }
+        .auth-logo-wrap.is-square { --logo-frame-radius: 16px; }
+
+        .auth-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         .auth-head h1 {
             margin: 6px 0 0;
             font-family: 'Playfair Display', serif;
@@ -120,7 +142,10 @@
 <body>
     <div class="auth-card">
         <div class="auth-head">
-            <i class="fas fa-drumstick-bite fa-2x"></i>
+            {{-- Ganti class is-circle ke is-square jika ingin frame kotak --}}
+            <div class="auth-logo-wrap is-circle">
+                <img src="{{ asset('images/logo-login.png') }}" alt="Logo Cikampek Jajanan" class="auth-logo">
+            </div>
             <h1>Cikampek Jajanan</h1>
             <p>Masuk ke sistem</p>
         </div>
