@@ -3,194 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Cikampek Jajanan</title>
+    <title>Login - Sistem Stock Barang JJC</title>
 
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --brand-yellow: #ffdf2b;
-            --brand-red: #e21d2b;
-            --brand-red-dark: #b8131e;
-            --text-main: #222;
-            --text-soft: #5d5d5d;
-            --panel: #fff;
-        }
-
-        * { box-sizing: border-box; }
-
         body {
-            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at 85% 15%, rgba(226, 29, 43, 0.14), transparent 35%),
-                        linear-gradient(135deg, #fff7c7 0%, var(--brand-yellow) 100%);
-            display: grid;
-            place-items: center;
-            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .auth-card {
+        .login-container {
             width: 100%;
-            max-width: 430px;
-            background: var(--panel);
-            border-radius: 18px;
-            border: 1px solid #f0f0f0;
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
-            overflow: hidden;
+            max-width: 400px;
         }
 
-        .auth-head {
-            background: linear-gradient(135deg, var(--brand-red) 0%, var(--brand-red-dark) 100%);
-            color: #fff;
+        .login-card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            background-color: white;
+        }
+
+        .login-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem 1rem 0 0;
+            padding: 2rem;
             text-align: center;
-            padding: 28px 20px;
+            color: white;
         }
 
-        .auth-logo-wrap {
-            width: 88px;
-            aspect-ratio: 1 / 1;
-            margin: 0 auto 10px;
-            border-radius: var(--logo-frame-radius, 16px);
-            background: rgba(255, 255, 255, 0.16);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            padding: 6px;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
+        .login-card-header h2 {
+            margin: 0;
+            font-weight: bold;
+            font-size: 1.5rem;
         }
 
-        .auth-logo-wrap.is-circle { --logo-frame-radius: 999px; }
-        .auth-logo-wrap.is-square { --logo-frame-radius: 16px; }
-
-        .auth-logo {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .auth-head h1 {
-            margin: 6px 0 0;
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-        }
-
-        .auth-head p {
-            margin: 6px 0 0;
-            opacity: 0.95;
-            font-size: 0.95rem;
-        }
-
-        .auth-body { padding: 24px; }
-
-        .form-label {
-            color: var(--text-main);
-            font-size: 0.92rem;
-            font-weight: 600;
-            margin-bottom: 6px;
+        .login-card-body {
+            padding: 2rem;
         }
 
         .form-control {
-            border-radius: 10px;
-            border: 1px solid #dcdcdc;
-            padding: 10px 12px;
-            font-size: 0.95rem;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+            padding: 0.75rem 1rem;
         }
 
         .form-control:focus {
-            border-color: var(--brand-red);
-            box-shadow: 0 0 0 0.2rem rgba(226, 29, 43, 0.14);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
 
-        .btn-brand {
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
             width: 100%;
-            border: 0;
-            border-radius: 10px;
-            background: var(--brand-red);
-            color: #fff;
-            font-weight: 600;
-            padding: 11px 14px;
         }
 
-        .btn-brand:hover {
-            background: var(--brand-red-dark);
-            color: #fff;
+        .btn-login:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6a3f8b 100%);
+            color: white;
         }
 
-        .auth-foot {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #efefef;
+        .register-link {
             text-align: center;
-            color: var(--text-soft);
-            font-size: 0.92rem;
+            margin-top: 1rem;
+            color: #667eea;
         }
 
-        .auth-foot a {
-            color: var(--brand-red);
-            font-weight: 600;
+        .register-link a {
+            color: #667eea;
             text-decoration: none;
+            font-weight: 600;
         }
 
-        .auth-foot a:hover { text-decoration: underline; }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <div class="auth-card">
-        <div class="auth-head">
-            {{-- Ganti class is-circle ke is-square jika ingin frame kotak --}}
-            <div class="auth-logo-wrap is-circle">
-                <img src="{{ asset('images/logo-login.png') }}" alt="Logo Cikampek Jajanan" class="auth-logo">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-card-header">
+                <h2><i class="fas fa-boxes"></i> Stock Barang</h2>
+                <small>Sistem Manajemen Stok</small>
             </div>
-            <h1>Cikampek Jajanan</h1>
-            <p>Masuk ke sistem</p>
-        </div>
 
-        <div class="auth-body">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <strong>Login gagal.</strong>
-                    <ul class="mb-0 mt-2 ps-3">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+            <div class="login-card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Error!</strong>
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                               id="email" name="email" value="{{ old('email') }}" required autofocus>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                               id="password" name="password" required>
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">
+                            Ingat saya
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-login btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+
+                <div class="register-link">
+                    Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a>
                 </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror" required autofocus>
-                    @error('email')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
-                    @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                </div>
-
-                <div class="mb-3 form-check">
-                    <input type="checkbox" id="remember" name="remember" class="form-check-input">
-                    <label class="form-check-label" for="remember">Ingat saya</label>
-                </div>
-
-                <button type="submit" class="btn btn-brand"><i class="fas fa-sign-in-alt me-2"></i>Masuk</button>
-            </form>
-
-            <div class="auth-foot">
-                Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a>
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+</html
