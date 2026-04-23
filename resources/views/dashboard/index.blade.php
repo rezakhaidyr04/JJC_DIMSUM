@@ -6,6 +6,12 @@
 @section('content')
     @push('styles')
     <style>
+        :root {
+            --brand-yellow: #ffd400;
+            --brand-red: #c62833;
+            --brand-red-dark: #8f1b24;
+        }
+
         .dashboard-stat {
             border-radius: 0.85rem;
             background: #fff;
@@ -48,10 +54,10 @@
             font-size: 1.1rem;
         }
 
-        .stat-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .stat-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .stat-green { background: linear-gradient(135deg, #22c55e, #16a34a); }
-        .stat-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .stat-red { background: linear-gradient(135deg, var(--brand-red), var(--brand-red-dark)); }
+        .stat-blue { background: linear-gradient(135deg, var(--brand-yellow), #ffcd00); }
+        .stat-green { background: linear-gradient(135deg, var(--brand-red-dark), var(--brand-red)); }
+        .stat-amber { background: linear-gradient(135deg, var(--brand-yellow), #ffc400); }
 
         .dashboard-stat__footer {
             border-top: 1px solid #f3f4f6;
@@ -63,11 +69,22 @@
             text-decoration: none;
             font-size: 0.86rem;
             font-weight: 600;
-            color: #b91c1c;
+            color: var(--brand-red);
         }
 
         .dashboard-stat__footer a:hover {
-            color: #991b1b;
+            color: var(--brand-red-dark);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--brand-yellow), #ffcd00) !important;
+            color: var(--brand-red-dark) !important;
+            border-bottom: 2px solid rgba(143, 27, 36, 0.2) !important;
+        }
+
+        .card-header .card-title {
+            color: var(--brand-red-dark) !important;
+            font-weight: 600;
         }
     </style>
     @endpush
@@ -158,8 +175,8 @@
                     {
                         label: 'Barang Masuk',
                         data: @json($chartData['masukData']),
-                        borderColor: '#16a34a',
-                        backgroundColor: 'rgba(34, 197, 94, 0.18)',
+                        borderColor: '#ffd400',
+                        backgroundColor: 'rgba(255, 212, 0, 0.18)',
                         borderWidth: 3,
                         tension: 0.4,
                         fill: true
@@ -167,8 +184,8 @@
                     {
                         label: 'Barang Keluar',
                         data: @json($chartData['keluarData']),
-                        borderColor: '#dc2626',
-                        backgroundColor: 'rgba(239, 68, 68, 0.14)',
+                        borderColor: '#c62833',
+                        backgroundColor: 'rgba(198, 40, 51, 0.14)',
                         borderWidth: 3,
                         tension: 0.4,
                         fill: true
