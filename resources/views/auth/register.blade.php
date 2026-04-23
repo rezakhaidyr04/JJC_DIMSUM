@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Sistem Stok Bahan Pendukung JJC</title>
+    <title>Register - Sistem Stock Barang JJC</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -97,7 +97,7 @@
     <div class="register-container">
         <div class="register-card">
             <div class="register-card-header">
-                <h2><i class="fas fa-boxes"></i> Stok Bahan Pendukung</h2>
+                <h2><i class="fas fa-boxes"></i> Stock Barang</h2>
                 <small>Daftar Akun Baru</small>
             </div>
 
