@@ -16,7 +16,7 @@
 
                         <div class="mb-3">
                             <label for="barang_id" class="form-label">Barang <span class="text-danger">*</span></label>
-                            <select class="form-control @error('barang_id') is-invalid @enderror" id="barang_id" name="barang_id" required>
+                            <select class="form-select @error('barang_id') is-invalid @enderror" id="barang_id" name="barang_id" required>
                                 <option value="">-- Pilih Barang --</option>
                                 @foreach($barang as $item)
                                     <option value="{{ $item->id }}" {{ old('barang_id') == $item->id ? 'selected' : '' }}>
@@ -47,8 +47,8 @@
                             @enderror
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-warning">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Simpan
                             </button>
                             <a href="{{ route('barang-keluar.index') }}" class="btn btn-secondary">
