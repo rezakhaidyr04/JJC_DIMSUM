@@ -201,8 +201,8 @@
 </head>
 <body>
     <header class="page-header" aria-label="Header login">
-        <img src="{{ asset('images/logo-login.png') }}" alt="Logo Cikampek Jajanan" class="page-header-logo">
-        <h2 class="page-header-title">Cikampek Jajanan</h2>
+        <img src="{{ asset('images/logo-login.png') }}" alt="Logo Jajanan Cikampek" class="page-header-logo">
+        <h2 class="page-header-title">Jajanan Cikampek</h2>
     </header>
 
     <div class="auth-card">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') - Cikampek Jajanan</title>
+    <title>@yield('title') - Jajanan Cikampek</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -43,12 +43,58 @@
         .main-header.navbar {
             background: linear-gradient(90deg, var(--accent-red) 0%, #B91720 100%);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1040;
         }
 
         .main-header.navbar .navbar-brand {
             font-weight: bold;
             font-size: 1.3rem;
             color: white !important;
+        }
+
+        .menu-toggle-btn {
+            color: #fff !important;
+            border-radius: 0.5rem;
+            padding: 0.45rem 0.6rem !important;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-toggle-btn:hover,
+        .menu-toggle-btn:focus {
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .navbar-brand-combined {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.2px;
+        }
+
+        .navbar-brand-combined:hover {
+            color: #fff;
+        }
+
+        .navbar-brand-logo {
+            width: 34px;
+            aspect-ratio: 1 / 1;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 237, 78, 0.55);
+            background: rgba(255, 255, 255, 0.16);
+            padding: 3px;
+            object-fit: contain;
+        }
+
+        .navbar-brand-label {
+            white-space: nowrap;
+            line-height: 1;
         }
 
         .navbar-text {
@@ -66,16 +112,69 @@
             background: linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%);
         }
 
+        @media (min-width: 992px) {
+            .main-sidebar,
+            .main-header,
+            .content-wrapper,
+            .main-footer {
+                transition: margin-left 0.22s ease, transform 0.22s ease;
+            }
+
+            body.sidebar-full-hide .main-sidebar {
+                margin-left: -250px;
+            }
+
+            body.sidebar-full-hide .main-header,
+            body.sidebar-full-hide .content-wrapper,
+            body.sidebar-full-hide .main-footer {
+                margin-left: 0 !important;
+            }
+
+            body.sidebar-full-hide .main-footer {
+                left: 0;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .main-footer {
+                left: 0;
+                margin-left: 0 !important;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .navbar-brand-label {
+                display: none;
+            }
+        }
+
         .brand-link {
             background: linear-gradient(135deg, var(--accent-red) 0%, #B91720 100%);
             border-bottom: 3px solid var(--primary-yellow);
             padding: 1rem !important;
+            display: flex;
+            align-items: center;
         }
 
         .brand-link .brand-text {
             color: white;
             font-size: 1.2rem;
             font-weight: 600;
+        }
+
+        .brand-logo-image {
+            width: 38px;
+            aspect-ratio: 1 / 1;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 237, 78, 0.55);
+            background: rgba(255, 255, 255, 0.16);
+            padding: 4px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .sidebar-mini.sidebar-collapse .brand-link {
+            justify-content: center;
         }
 
         .nav-sidebar .nav-link {
@@ -104,6 +203,8 @@
         /* Content Area */
         .content-wrapper {
             background-color: #f8f9fa;
+            margin-top: 57px;
+            padding-bottom: 72px;
         }
 
         .content-header {
@@ -282,6 +383,11 @@
             color: #bbb;
             border-top: 3px solid var(--accent-red);
             padding: 1rem 1.5rem;
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            z-index: 1030;
         }
 
         .main-footer strong {
@@ -313,7 +419,13 @@
         <nav class="main-header navbar navbar-expand navbar-dark">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                    <a class="nav-link menu-toggle-btn" id="menuToggleBtn" href="#" role="button" aria-label="Toggle sidebar" aria-expanded="true"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-flex align-items-center ms-1">
+                    <a href="{{ route('dashboard') }}" class="navbar-brand-combined text-decoration-none">
+                        <img src="{{ asset('images/logo-login.png') }}" alt="Logo Jajanan Cikampek" class="navbar-brand-logo">
+                        <span class="navbar-brand-label">Jajanan Cikampek</span>
+                    </a>
                 </li>
             </ul>
 
@@ -333,8 +445,8 @@
         <aside class="main-sidebar elevation-4">
             <!-- Brand/Logo -->
             <a href="{{ route('dashboard') }}" class="brand-link text-decoration-none">
-                <i class="fas fa-drumstick-bite me-2"></i>
-                <span class="brand-text">Cikampek Jajanan</span>
+                <img src="{{ asset('images/logo-login.png') }}" alt="Logo Jajanan Cikampek" class="brand-logo-image">
+                <span class="brand-text ms-2">Jajanan Cikampek</span>
             </a>
 
             <!-- Sidebar Menu -->
@@ -428,7 +540,7 @@
 
         <!-- Footer -->
         <footer class="main-footer">
-            <strong>Copyright &copy; 2024 <a href="{{ url('/') }}">Cikampek Jajanan</a>.</strong>
+            <strong>Copyright &copy; 2024 <a href="{{ url('/') }}">Jajanan Cikampek</a>.</strong>
             Sistem Manajemen Stok Cerdas
             <div class="float-end d-none d-sm-inline-block">
                 <b>Versi</b> 1.0.0 - Sekali Jajan, Jajan Teroos!!!
@@ -441,6 +553,49 @@
 
     <!-- AdminLTE JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.getElementById('menuToggleBtn');
+            if (!toggleButton) return;
+
+            const body = document.body;
+            const mobileQuery = window.matchMedia('(max-width: 991.98px)');
+
+            const updateToggleState = () => {
+                const sidebarVisible = mobileQuery.matches
+                    ? body.classList.contains('sidebar-open')
+                    : !body.classList.contains('sidebar-full-hide');
+
+                toggleButton.setAttribute('aria-expanded', String(sidebarVisible));
+            };
+
+            toggleButton.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                if (mobileQuery.matches) {
+                    body.classList.toggle('sidebar-open');
+                    body.classList.remove('sidebar-full-hide');
+                    body.classList.remove('sidebar-collapse');
+                } else {
+                    body.classList.toggle('sidebar-full-hide');
+                    body.classList.remove('sidebar-open');
+                    body.classList.remove('sidebar-collapse');
+                }
+
+                updateToggleState();
+            });
+
+            window.addEventListener('resize', function () {
+                if (!mobileQuery.matches) {
+                    body.classList.remove('sidebar-open');
+                }
+                updateToggleState();
+            });
+
+            updateToggleState();
+        });
+    </script>
 
     @stack('scripts')
 </body>
