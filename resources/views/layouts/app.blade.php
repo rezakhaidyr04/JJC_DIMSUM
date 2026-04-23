@@ -382,12 +382,29 @@
             background-color: #2C2C2C;
             color: #bbb;
             border-top: 3px solid var(--accent-red);
-            padding: 1rem 1.5rem;
-            position: fixed;
-            bottom: 0;
-            left: 250px;
-            right: 0;
-            z-index: 1030;
+            padding: 0.85rem 1.5rem;
+            position: static;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .main-footer .footer-line {
+            display: block;
+        }
+
+        .main-footer .footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .main-footer strong {
+            font-weight: 700;
+            letter-spacing: 0.1px;
         }
 
         .main-footer strong {
@@ -407,6 +424,15 @@
         @media (max-width: 767px) {
             .content-header h1 {
                 font-size: 1.5rem;
+            }
+
+            .main-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .main-footer .footer-right {
+                margin-left: 0;
             }
         }
     </style>
@@ -540,11 +566,13 @@
 
         <!-- Footer -->
         <footer class="main-footer">
-            <strong>Copyright &copy; 2024 <a href="{{ url('/') }}">Jajanan Cikampek</a>.</strong>
-            Sistem Manajemen Stok Cerdas
-            <div class="float-end d-none d-sm-inline-block">
-                <b>Versi</b> 1.0.0 - Sekali Jajan, Jajan Teroos!!!
+            <div class="footer-left">
+                <span class="footer-line">
+                    <strong>Copyright &copy; {{ date('Y') }} <a href="{{ url('/') }}">Jajanan Cikampek</a>.</strong>
+                </span>
+                <span class="footer-line">Sistem Manajemen Stok Cerdas.</span>
             </div>
+            <span class="footer-line"><b>Versi</b> 1.0.0 - Sekali Jajan, Jajan Teroos!!!</span>
         </footer>
     </div>
 

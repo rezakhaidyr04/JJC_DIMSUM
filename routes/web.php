@@ -35,11 +35,18 @@ Route::middleware('auth')->group(function () {
     Route::resource('barang-masuk', BarangMasukController::class)->only(['index']);
     Route::resource('barang-keluar', BarangKeluarController::class)->only(['index']);
 
-    // Write routes for karyawan only
-    Route::middleware('karyawan')->group(function () {
+    // Full access for owner
+    Route::middleware('owner')->group(function () {
         Route::resource('barang', BarangController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::resource('barang-masuk', BarangMasukController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::resource('barang-keluar', BarangKeluarController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    });
+
+    // Insert-only access for karyawan
+    Route::middleware('karyawan')->group(function () {
+        Route::resource('barang', BarangController::class)->only(['create', 'store']);
+        Route::resource('barang-masuk', BarangMasukController::class)->only(['create', 'store']);
+        Route::resource('barang-keluar', BarangKeluarController::class)->only(['create', 'store']);
     });
 
     // Laporan

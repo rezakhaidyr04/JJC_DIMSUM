@@ -6,15 +6,15 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureKaryawanRole
+class EnsureOwnerRole
 {
     /**
      * Handle an incoming request.
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->isKaryawan()) {
-            abort(403, 'Akses ini hanya untuk karyawan.');
+        if (!$request->user() || !$request->user()->isOwner()) {
+            abort(403, 'Akses ini hanya untuk owner.');
         }
 
         return $next($request);

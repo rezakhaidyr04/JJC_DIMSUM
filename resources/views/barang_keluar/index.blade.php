@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Data Barang Keluar</h3>
-                    @if(Auth::user()->isKaryawan())
+                    @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
                         <div class="card-tools">
                             <a href="{{ route('barang-keluar.create') }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-plus"></i> Tambah
@@ -26,7 +26,7 @@
                                 <th>Barang</th>
                                 <th>Jumlah</th>
                                 <th>Tanggal</th>
-                                @if(Auth::user()->isKaryawan())
+                                @if(Auth::user()->isOwner())
                                     <th style="width: 20%">Aksi</th>
                                 @endif
                             </tr>
@@ -41,7 +41,7 @@
                                             <span class="badge bg-danger">{{ $item->jumlah }}</span>
                                         </td>
                                         <td>{{ $item->tanggal->format('d-m-Y') }}</td>
-                                        @if(Auth::user()->isKaryawan())
+                                        @if(Auth::user()->isOwner())
                                             <td>
                                                 <div class="actions-inline">
                                                     <a href="{{ route('barang-keluar.edit', $item->id) }}" class="btn btn-warning btn-sm">
@@ -61,7 +61,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="{{ Auth::user()->isKaryawan() ? 5 : 4 }}" class="text-center text-muted">Tidak ada data</td>
+                                    <td colspan="{{ Auth::user()->isOwner() ? 5 : 4 }}" class="text-center text-muted">Tidak ada data</td>
                                 </tr>
                             @endif
                         </tbody>
