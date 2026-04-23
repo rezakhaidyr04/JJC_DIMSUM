@@ -13,14 +13,14 @@
 
     <style>
         :root {
-            --brand-yellow: #ffdf2b;
-            --brand-yellow-soft: #fff6bf;
-            --brand-red: #e21d2b;
-            --brand-red-dark: #b8131e;
-            --text-main: #222;
-            --text-soft: #5d5d5d;
-            --panel: #ffffff;
-            --bg-soft: #fffdf3;
+            --brand-yellow: #d4a437;
+            --brand-yellow-soft: #f7eddc;
+            --brand-red: #c62833;
+            --brand-red-dark: #8f1b24;
+            --text-main: #221b16;
+            --text-soft: #6f6155;
+            --panel: #fffdf8;
+            --bg-soft: #f3ece2;
         }
 
         * { box-sizing: border-box; }
@@ -29,12 +29,13 @@
             margin: 0;
             font-family: 'Poppins', sans-serif;
             color: var(--text-main);
-            background: var(--bg-soft);
+            background: linear-gradient(180deg, #f8f2e8 0%, var(--bg-soft) 100%);
         }
 
         .topbar {
-            background: linear-gradient(90deg, var(--brand-yellow) 0%, #ffe96d 100%);
-            border-bottom: 2px solid var(--brand-red);
+            background: rgba(255, 253, 248, 0.95);
+            border-bottom: 1px solid rgba(143, 27, 36, 0.22);
+            backdrop-filter: blur(8px);
         }
 
         .navbar-brand {
@@ -82,8 +83,9 @@
         .hero {
             position: relative;
             padding: 84px 16px 64px;
-            background: radial-gradient(circle at 85% 10%, rgba(226, 29, 43, 0.12), transparent 35%),
-                        linear-gradient(135deg, var(--brand-yellow-soft) 0%, #fff9d7 100%);
+            background: radial-gradient(circle at 90% 10%, rgba(212, 164, 55, 0.2), transparent 35%),
+                        radial-gradient(circle at 12% 85%, rgba(198, 40, 51, 0.09), transparent 35%),
+                        linear-gradient(135deg, #fbf6ed 0%, var(--brand-yellow-soft) 100%);
         }
 
         .hero-wrap {
@@ -110,7 +112,7 @@
             margin: 0;
             font-family: 'Playfair Display', serif;
             font-size: clamp(2rem, 6vw, 3.8rem);
-            color: var(--brand-red);
+            color: var(--text-main);
             line-height: 1.1;
         }
 
@@ -133,6 +135,7 @@
             max-width: 1120px;
             margin: 0 auto;
             padding: 64px 16px;
+            background: transparent;
         }
 
         .section-title {
@@ -161,9 +164,9 @@
         .feature-card {
             background: var(--panel);
             border-radius: 16px;
-            border: 1px solid #f1f1f1;
+            border: 1px solid #efe5d8;
             border-top: 4px solid var(--brand-red);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 28px rgba(34, 27, 22, 0.08);
             padding: 22px;
         }
 
@@ -187,10 +190,10 @@
         }
 
         .contact-box {
-            background: #fff;
-            border: 1px solid #f2f2f2;
+            background: #fffdf8;
+            border: 1px solid #efe5d8;
             border-radius: 18px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 12px 28px rgba(34, 27, 22, 0.08);
             padding: 28px;
             max-width: 700px;
             margin: 0 auto;
@@ -215,9 +218,9 @@
 
         .site-footer {
             margin-top: 40px;
-            background: #1f1f1f;
-            color: #efefef;
-            border-top: 3px solid var(--brand-red);
+            background: #251d18;
+            color: #f2ebe2;
+            border-top: 3px solid var(--brand-yellow);
         }
 
         .site-footer .inner {

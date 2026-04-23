@@ -13,12 +13,12 @@
 
     <style>
         :root {
-            --brand-yellow: #ffdf2b;
-            --brand-red: #e21d2b;
-            --brand-red-dark: #b8131e;
-            --text-main: #222;
-            --text-soft: #5d5d5d;
-            --panel: #fff;
+            --brand-yellow: #d4a437;
+            --brand-red: #c62833;
+            --brand-red-dark: #8f1b24;
+            --text-main: #221b16;
+            --text-soft: #6f6155;
+            --panel: #fffdf8;
         }
 
         * { box-sizing: border-box; }
@@ -27,11 +27,42 @@
             margin: 0;
             min-height: 100vh;
             font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at 85% 15%, rgba(226, 29, 43, 0.14), transparent 35%),
-                        linear-gradient(135deg, #fff7c7 0%, var(--brand-yellow) 100%);
-            display: grid;
-            place-items: center;
+            background: radial-gradient(circle at 85% 14%, rgba(212, 164, 55, 0.18), transparent 30%),
+                        linear-gradient(145deg, #3a1f1f 0%, var(--brand-red-dark) 42%, var(--brand-red) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
+        }
+
+        .page-header {
+            width: 100%;
+            max-width: 470px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #f8efe0;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .page-header-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 999px;
+            border: 1px solid rgba(212, 164, 55, 0.45);
+            background: rgba(255, 255, 255, 0.16);
+            padding: 5px;
+            object-fit: contain;
+        }
+
+        .page-header-title {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.55rem;
+            line-height: 1.1;
         }
 
         .auth-card {
@@ -39,8 +70,8 @@
             max-width: 470px;
             background: var(--panel);
             border-radius: 18px;
-            border: 1px solid #f0f0f0;
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e9dbc6;
+            box-shadow: 0 18px 36px rgba(24, 12, 12, 0.28);
             overflow: hidden;
         }
 
@@ -49,10 +80,11 @@
             color: #fff;
             text-align: center;
             padding: 28px 20px;
+            border-bottom: 1px solid rgba(212, 164, 55, 0.35);
         }
 
         .auth-head h1 {
-            margin: 6px 0 0;
+            margin: 0;
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
         }
@@ -74,9 +106,10 @@
 
         .form-control {
             border-radius: 10px;
-            border: 1px solid #dcdcdc;
+            border: 1px solid #d8cabc;
             padding: 10px 12px;
             font-size: 0.95rem;
+            background: #fffdf9;
         }
 
         .form-control:focus {
@@ -118,10 +151,14 @@
     </style>
 </head>
 <body>
+    <header class="page-header" aria-label="Header register">
+        <img src="{{ asset('images/logo-login.png') }}" alt="Logo Cikampek Jajanan" class="page-header-logo">
+        <h2 class="page-header-title">Cikampek Jajanan</h2>
+    </header>
+
     <div class="auth-card">
         <div class="auth-head">
-            <i class="fas fa-drumstick-bite fa-2x"></i>
-            <h1>Cikampek Jajanan</h1>
+            <h1>Daftar Akun</h1>
             <p>Daftar akun baru</p>
         </div>
 
