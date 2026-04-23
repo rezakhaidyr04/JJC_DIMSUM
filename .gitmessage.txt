@@ -1,0 +1,13 @@
+# <type>(<scope>): <judul singkat dalam Bahasa Indonesia>
+#
+# type: feat | fix | style | refactor | docs | chore
+# scope contoh: auth, barang, laporan, ui, routes, db
+#
+# Contoh:
+# feat(auth): tambah middleware role karyawan
+# fix(barang): perbaiki validasi stok minimum
+# style(login): sesuaikan warna tombol masuk
+#
+# Catatan:
+# - Pakai kalimat aktif, singkat, dan spesifik
+# - Hindari pesan umum seperti "update" atau "perbaikan"

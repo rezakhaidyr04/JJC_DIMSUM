@@ -28,6 +28,25 @@ php artisan migrate
 php artisan db:seed
 ```
 
+## Format Pesan Commit
+
+Gunakan format sederhana berikut agar riwayat commit konsisten:
+
+- feat: untuk fitur baru
+- fix: untuk perbaikan bug
+- style: untuk perubahan tampilan/UI tanpa mengubah logika
+- refactor: untuk perapian struktur kode
+- docs: untuk perubahan dokumentasi
+- chore: untuk pekerjaan pendukung (config, tooling, dsb)
+
+Contoh:
+
+```text
+feat(auth): tambah validasi login role owner
+fix(barang): perbaiki hitung stok saat hapus barang masuk
+style(login): sesuaikan warna form dengan logo
+```
+
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
