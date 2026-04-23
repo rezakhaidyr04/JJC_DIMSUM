@@ -18,7 +18,8 @@
                     @endif
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-striped table-hover">
+                    <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover mb-0">
                         <thead>
                             <tr>
                                 <th style="width: 5%">No</th>
@@ -37,21 +38,23 @@
                                         <td>{{ ($barangKeluar->currentPage() - 1) * $barangKeluar->perPage() + $loop->iteration }}</td>
                                         <td>{{ $item->barang->nama_barang }}</td>
                                         <td>
-                                            <span class="badge bg-warning">{{ $item->jumlah }}</span>
+                                            <span class="badge bg-danger">{{ $item->jumlah }}</span>
                                         </td>
                                         <td>{{ $item->tanggal->format('d-m-Y') }}</td>
                                         @if(Auth::user()->isKaryawan())
                                             <td>
-                                                <a href="{{ route('barang-keluar.edit', $item->id) }}" class="btn btn-info btn-xs">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                <form method="POST" action="{{ route('barang-keluar.destroy', $item->id) }}" style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin ingin menghapus?')">
-                                                        <i class="fas fa-trash"></i> Hapus
-                                                    </button>
-                                                </form>
+                                                <div class="actions-inline">
+                                                    <a href="{{ route('barang-keluar.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </a>
+                                                    <form method="POST" action="{{ route('barang-keluar.destroy', $item->id) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">
+                                                            <i class="fas fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         @endif
                                     </tr>
@@ -63,6 +66,7 @@
                             @endif
                         </tbody>
                     </table>
+                    </div>
 
                     <!-- Pagination -->
                     <div class="d-flex justify-content-center">
