@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\BarangKeluar;
+use App\Models\BarangMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -35,11 +37,21 @@ class LaporanController extends Controller
 
         if ($export === 'pdf') {
             $filename = 'laporan-stok-' . now()->format('Ymd_His') . '.pdf';
+
+            $transaksiRows = $this->buildTransaksiLaporan($tanggalMulai, $tanggalSelesai);
+            $totals = [
+                'masuk' => $transaksiRows->where('jenis', 'Masuk')->sum('jumlah'),
+                'keluar' => $transaksiRows->where('jenis', 'Keluar')->sum('jumlah'),
+                'net' => $transaksiRows->where('jenis', 'Masuk')->sum('jumlah') - $transaksiRows->where('jenis', 'Keluar')->sum('jumlah'),
+            ];
             
             $pdf = Pdf::loadView('laporan.pdf', [
                 'laporan' => $laporan,
+                'transaksiRows' => $transaksiRows,
+                'totals' => $totals,
                 'tanggalMulai' => $tanggalMulai,
                 'tanggalSelesai' => $tanggalSelesai,
+                'logoBase64' => $this->getLogoBase64(),
             ])->setPaper('a4', 'portrait')->setOption('defaultFont', 'Arial');
 
             return $pdf->download($filename);
@@ -50,6 +62,73 @@ class LaporanController extends Controller
             'tanggalMulai' => $tanggalMulai,
             'tanggalSelesai' => $tanggalSelesai,
         ]);
+    }
+
+    /**
+     * Build detailed transaction rows for PDF output.
+     */
+    private function buildTransaksiLaporan(?string $tanggalMulai, ?string $tanggalSelesai): Collection
+    {
+        $masukQuery = BarangMasuk::with(['barang:id,nama_barang', 'user:id,name'])
+            ->whereNull('deleted_at');
+
+        $keluarQuery = BarangKeluar::with(['barang:id,nama_barang', 'user:id,name'])
+            ->whereNull('deleted_at');
+
+        if ($tanggalMulai && $tanggalSelesai) {
+            $masukQuery->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);
+            $keluarQuery->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);
+        } elseif ($tanggalMulai) {
+            $masukQuery->whereDate('tanggal', '>=', $tanggalMulai);
+            $keluarQuery->whereDate('tanggal', '>=', $tanggalMulai);
+        } elseif ($tanggalSelesai) {
+            $masukQuery->whereDate('tanggal', '<=', $tanggalSelesai);
+            $keluarQuery->whereDate('tanggal', '<=', $tanggalSelesai);
+        }
+
+        $masukRows = $masukQuery->get()->map(function (BarangMasuk $item) {
+            return [
+                'jenis' => 'Masuk',
+                'nama_barang' => $item->barang?->nama_barang ?? '-',
+                'jumlah' => $item->jumlah,
+                'nama_penginput' => $item->user?->name ?? '-',
+                'waktu_input' => $item->created_at,
+            ];
+        });
+
+        $keluarRows = $keluarQuery->get()->map(function (BarangKeluar $item) {
+            return [
+                'jenis' => 'Keluar',
+                'nama_barang' => $item->barang?->nama_barang ?? '-',
+                'jumlah' => $item->jumlah,
+                'nama_penginput' => $item->user?->name ?? '-',
+                'waktu_input' => $item->created_at,
+            ];
+        });
+
+        return $masukRows
+            ->merge($keluarRows)
+            ->sortByDesc(function (array $row) {
+                return $row['waktu_input'];
+            })
+            ->values();
+    }
+
+    private function getLogoBase64(): ?string
+    {
+        $logoPath = public_path('images/logo-login.png');
+
+        if (!file_exists($logoPath)) {
+            return null;
+        }
+
+        $logoContents = file_get_contents($logoPath);
+
+        if ($logoContents === false) {
+            return null;
+        }
+
+        return 'data:image/png;base64,' . base64_encode($logoContents);
     }
 
     /**

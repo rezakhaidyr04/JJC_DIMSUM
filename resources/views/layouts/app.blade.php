@@ -688,6 +688,24 @@
                             <p>Laporan</p>
                         </a>
                     </li>
+
+                    @if(auth()->user()?->isOwner())
+                        <li class="nav-item">
+                            <a href="{{ route('void-requests.index') }}" class="nav-link {{ request()->routeIs('void-requests.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-user-shield"></i>
+                                <p>Approval Void</p>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if(auth()->user()?->isKaryawan())
+                        <li class="nav-item">
+                            <a href="{{ route('stok-opname.index') }}" class="nav-link {{ request()->routeIs('stok-opname.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-clipboard-check"></i>
+                                <p>Stok Opname Harian</p>
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </nav>
         </aside>

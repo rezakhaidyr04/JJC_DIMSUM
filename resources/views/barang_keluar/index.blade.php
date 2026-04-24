@@ -246,7 +246,9 @@
                                 <th>Barang</th>
                                 <th>Jumlah</th>
                                 <th>Tanggal</th>
-                                @if(Auth::user()->isOwner())
+                                <th>Penginput</th>
+                                <th>Status Void</th>
+                                @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
                                     <th style="width: 20%">Aksi</th>
                                 @endif
                             </tr>
@@ -260,30 +262,68 @@
                                         <td>
                                             <span class="badge barang-keluar-jumlah">{{ $item->jumlah }}</span>
                                         </td>
-                                        <td><span class="barang-keluar-tanggal"><i class="far fa-calendar-alt"></i>{{ $item->tanggal->format('d M Y') }}</span></td>
-                                        @if(Auth::user()->isOwner())
+                                        <td><span class="barang-keluar-tanggal"><i class="far fa-calendar-alt"></i>{{ $item->created_at->format('d M Y H:i') }} WIB</span></td>
+                                        <td>{{ $item->user?->name ?? '-' }}</td>
+                                        <td>
+                                            @if($item->void_status === 'pending')
+                                                <span class="badge bg-warning text-dark">Pending Void</span>
+                                            @elseif($item->void_status === 'approved')
+                                                <span class="badge bg-danger">Voided</span>
+                                            @else
+                                                <span class="badge bg-success">Normal</span>
+                                            @endif
+                                        </td>
+                                        @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
                                             <td>
                                                 <div class="actions-inline">
-                                                    <a href="{{ route('barang-keluar.edit', $item->id) }}" class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-edit" aria-hidden="true"></i>
-                                                        <span class="action-label">Edit</span>
-                                                    </a>
-                                                    <form method="POST" action="{{ route('barang-keluar.destroy', $item->id) }}">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" aria-label="Hapus barang keluar">
-                                                            <i class="fas fa-trash" aria-hidden="true"></i>
-                                                            <span class="action-label">Hapus</span>
-                                                        </button>
-                                                    </form>
+                                                    @if(Auth::user()->isOwner())
+                                                        @if($item->void_status === 'pending')
+                                                            <form method="POST" action="{{ route('barang-keluar.approve-void', $item->id) }}">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Setujui void dan hapus data ini?')">
+                                                                    <i class="fas fa-check"></i>
+                                                                    <span class="action-label">Approve Void</span>
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <a href="{{ route('barang-keluar.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                                                <i class="fas fa-edit" aria-hidden="true"></i>
+                                                                <span class="action-label">Edit</span>
+                                                            </a>
+                                                            <form method="POST" action="{{ route('barang-keluar.destroy', $item->id) }}">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" aria-label="Hapus barang keluar">
+                                                                    <i class="fas fa-trash" aria-hidden="true"></i>
+                                                                    <span class="action-label">Hapus</span>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    @elseif(Auth::user()->isKaryawan())
+                                                        @if($item->void_status === 'pending')
+                                                            <span class="badge bg-warning text-dark">Menunggu approval owner</span>
+                                                        @else
+                                                            <form method="POST" action="{{ route('barang-keluar.request-void', $item->id) }}" class="void-request-form">
+                                                                @csrf
+                                                                <input type="hidden" name="void_reason" value="">
+                                                                <button type="button" class="btn btn-outline-danger btn-sm js-btn-void">
+                                                                    <i class="fas fa-ban"></i>
+                                                                    <span class="action-label">Request Void</span>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    @endif
                                                 </div>
+                                                @if($item->void_status === 'pending' && $item->void_reason)
+                                                    <small class="text-muted d-block mt-1">Alasan: {{ $item->void_reason }}</small>
+                                                @endif
                                             </td>
                                         @endif
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="{{ Auth::user()->isOwner() ? 5 : 4 }}" class="text-center text-muted">Tidak ada data</td>
+                                    <td colspan="{{ Auth::user()->isOwner() || Auth::user()->isKaryawan() ? 7 : 6 }}" class="text-center text-muted">Tidak ada data</td>
                                 </tr>
                             @endif
                         </tbody>
@@ -298,4 +338,27 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.querySelectorAll('.void-request-form .js-btn-void').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const form = button.closest('form');
+                const reason = window.prompt('Masukkan alasan request void (minimal 10 karakter):');
+
+                if (!reason) {
+                    return;
+                }
+
+                if (reason.trim().length < 10) {
+                    alert('Alasan minimal 10 karakter.');
+                    return;
+                }
+
+                form.querySelector('input[name="void_reason"]').value = reason.trim();
+                form.submit();
+            });
+        });
+    </script>
+    @endpush
 @endsection

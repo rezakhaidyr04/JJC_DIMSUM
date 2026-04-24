@@ -161,6 +161,44 @@
             background: linear-gradient(135deg, #ffffff 0%, rgba(255, 212, 0, 0.02) 100%);
         }
 
+        .activity-log-list {
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .activity-log-item {
+            border: 1px solid #f0d6d8;
+            border-radius: 0.85rem;
+            padding: 0.75rem 0.9rem;
+            background: linear-gradient(180deg, #fff 0%, #fff8f8 100%);
+        }
+
+        .activity-log-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.65rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .activity-log-user {
+            font-weight: 700;
+            color: #8f1b24;
+        }
+
+        .activity-log-time {
+            font-size: 0.82rem;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .activity-log-desc {
+            margin: 0;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+
         /* Smooth animations */
         @keyframes slideInUp {
             from {
@@ -281,6 +319,43 @@
         </div>
     </div>
 
+    @if(Auth::user()->isOwner())
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title">Activity Log Dashboard (5 Input Terakhir Karyawan)</h3>
+                        <span class="badge bg-light text-dark">Auto refresh 30 detik</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-log-list">
+                            @forelse($recentActivities as $activity)
+                                <div class="activity-log-item">
+                                    <div class="activity-log-head">
+                                        <div>
+                                            <span class="activity-log-user">{{ $activity->penginput }}</span>
+                                            @if($activity->tipe === 'masuk')
+                                                <span class="badge bg-success ms-1">Masuk</span>
+                                            @else
+                                                <span class="badge bg-danger ms-1">Keluar</span>
+                                            @endif
+                                        </div>
+                                        <span class="activity-log-time">{{ \Carbon\Carbon::parse($activity->created_at)->format('d M Y H:i') }} WIB</span>
+                                    </div>
+                                    <p class="activity-log-desc mb-0">
+                                        {{ $activity->nama_barang }} - Qty {{ $activity->jumlah }}
+                                    </p>
+                                </div>
+                            @empty
+                                <div class="text-muted">Belum ada aktivitas input dari karyawan.</div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @push('scripts')
     <script>
         const ctx = document.getElementById('stockChart').getContext('2d');
@@ -385,6 +460,12 @@
                 }
             }
         });
+
+        @if(Auth::user()->isOwner())
+            setInterval(function () {
+                window.location.reload();
+            }, 30000);
+        @endif
     </script>
     @endpush
 @endsection

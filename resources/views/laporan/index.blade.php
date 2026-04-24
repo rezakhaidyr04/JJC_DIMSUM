@@ -26,7 +26,7 @@
                         <a href="{{ route('laporan.index', array_filter(['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'export' => 'excel'])) }}" class="btn btn-success btn-sm">
                             <i class="fas fa-file-excel"></i> Export Excel
                         </a>
-                        <a href="{{ route('laporan.index', array_filter(['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'export' => 'pdf'])) }}" target="_blank" class="btn btn-danger btn-sm">
+                        <a href="{{ route('laporan.index', array_filter(['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'export' => 'pdf'])) }}" class="btn btn-danger btn-sm">
                             <i class="fas fa-file-pdf"></i> Export PDF
                         </a>
                     </div>

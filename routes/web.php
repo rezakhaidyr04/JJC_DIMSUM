@@ -6,6 +6,8 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\StokOpnameController;
+use App\Http\Controllers\VoidRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +42,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('barang', BarangController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::resource('barang-masuk', BarangMasukController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::resource('barang-keluar', BarangKeluarController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+        Route::get('/void-requests', [VoidRequestController::class, 'index'])->name('void-requests.index');
+
+        Route::post('barang-masuk/{barangMasuk}/approve-void', [BarangMasukController::class, 'approveVoid'])->name('barang-masuk.approve-void');
+        Route::post('barang-keluar/{barangKeluar}/approve-void', [BarangKeluarController::class, 'approveVoid'])->name('barang-keluar.approve-void');
     });
 
     // Insert-only access for karyawan
@@ -47,6 +53,12 @@ Route::middleware('auth')->group(function () {
         Route::resource('barang', BarangController::class)->only(['create', 'store']);
         Route::resource('barang-masuk', BarangMasukController::class)->only(['create', 'store']);
         Route::resource('barang-keluar', BarangKeluarController::class)->only(['create', 'store']);
+
+        Route::post('barang-masuk/{barangMasuk}/request-void', [BarangMasukController::class, 'requestVoid'])->name('barang-masuk.request-void');
+        Route::post('barang-keluar/{barangKeluar}/request-void', [BarangKeluarController::class, 'requestVoid'])->name('barang-keluar.request-void');
+
+        Route::get('/stok-opname-harian', [StokOpnameController::class, 'index'])->name('stok-opname.index');
+        Route::post('/stok-opname-harian', [StokOpnameController::class, 'store'])->name('stok-opname.store');
     });
 
     // Laporan

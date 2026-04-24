@@ -7,6 +7,7 @@ use App\Models\Barang;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class BarangMasukController extends Controller
 {
@@ -15,7 +16,10 @@ class BarangMasukController extends Controller
      */
     public function index(): View
     {
-        $barangMasuk = BarangMasuk::with('barang')->latest()->paginate(10);
+        $barangMasuk = BarangMasuk::with(['barang', 'user', 'voidRequester'])
+            ->latest()
+            ->paginate(10);
+
         return view('barang_masuk.index', compact('barangMasuk'));
     }
 
@@ -39,7 +43,12 @@ class BarangMasukController extends Controller
             'tanggal' => 'required|date',
         ]);
 
-        $barangMasuk = BarangMasuk::create($validated);
+        $validated['user_id'] = auth()->id();
+        $validated['created_at'] = now();
+        $validated['updated_at'] = now();
+        $validated['void_status'] = 'none';
+
+        BarangMasuk::create($validated);
 
         // Increase barang stok
         $barang = Barang::find($validated['barang_id']);
@@ -70,6 +79,14 @@ class BarangMasukController extends Controller
      */
     public function update(Request $request, BarangMasuk $barangMasuk): RedirectResponse
     {
+        $this->authorize('update', $barangMasuk);
+
+        if ($barangMasuk->void_status === 'pending') {
+            return redirect()->route('barang-masuk.index')->withErrors([
+                'void' => 'Data dengan status Pending Void tidak dapat diubah.',
+            ]);
+        }
+
         $validated = $request->validate([
             'barang_id' => 'required|exists:barang,id',
             'jumlah' => 'required|integer|min:1',
@@ -95,6 +112,14 @@ class BarangMasukController extends Controller
      */
     public function destroy(BarangMasuk $barangMasuk): RedirectResponse
     {
+        $this->authorize('delete', $barangMasuk);
+
+        if ($barangMasuk->void_status === 'pending') {
+            return redirect()->route('barang-masuk.index')->withErrors([
+                'void' => 'Data Pending Void hanya boleh diproses melalui persetujuan void.',
+            ]);
+        }
+
         // Decrease barang stok
         $barang = Barang::find($barangMasuk->barang_id);
         $barang->decrement('stok', $barangMasuk->jumlah);
@@ -102,5 +127,51 @@ class BarangMasukController extends Controller
         $barangMasuk->delete();
 
         return redirect()->route('barang-masuk.index')->with('success', 'Barang masuk berhasil dihapus.');
+    }
+
+    /**
+     * Karyawan request void untuk transaksi yang salah input.
+     */
+    public function requestVoid(Request $request, BarangMasuk $barangMasuk): RedirectResponse
+    {
+        $this->authorize('requestVoid', $barangMasuk);
+
+        $validated = $request->validate([
+            'void_reason' => ['required', 'string', 'min:10', 'max:500'],
+        ]);
+
+        $barangMasuk->update([
+            'void_status' => 'pending',
+            'void_reason' => $validated['void_reason'],
+            'void_requested_by' => auth()->id(),
+            'void_requested_at' => now(),
+            'void_approved_by' => null,
+            'void_approved_at' => null,
+        ]);
+
+        return redirect()->route('barang-masuk.index')->with('success', 'Request void berhasil dikirim ke owner.');
+    }
+
+    /**
+     * Owner menyetujui void lalu transaksi dihapus (soft delete) dan stok dikoreksi.
+     */
+    public function approveVoid(BarangMasuk $barangMasuk): RedirectResponse
+    {
+        $this->authorize('approveVoid', $barangMasuk);
+
+        DB::transaction(function () use ($barangMasuk) {
+            $barang = Barang::find($barangMasuk->barang_id);
+            $barang->decrement('stok', $barangMasuk->jumlah);
+
+            $barangMasuk->update([
+                'void_status' => 'approved',
+                'void_approved_by' => auth()->id(),
+                'void_approved_at' => now(),
+            ]);
+
+            $barangMasuk->delete();
+        });
+
+        return redirect()->route('barang-masuk.index')->with('success', 'Void disetujui. Data transaksi berhasil dihapus.');
     }
 }
