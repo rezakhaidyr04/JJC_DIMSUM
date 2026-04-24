@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') - Jajanan Cikampek</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -23,11 +27,21 @@
             --primary-red: #E31E24;
             --accent-red: #DC2626;
             --text-dark: #2D2D2D;
+            --surface-0: #f6f7fb;
+            --surface-1: #ffffff;
+            --surface-2: #f9fafb;
+            --border-soft: #eceff4;
+            --shadow-soft: 0 10px 30px rgba(17, 24, 39, 0.08);
+            --shadow-hover: 0 14px 36px rgba(17, 24, 39, 0.12);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1f2937;
+            background:
+                radial-gradient(circle at 8% 0%, rgba(227, 30, 36, 0.06) 0%, rgba(227, 30, 36, 0) 34%),
+                radial-gradient(circle at 95% 12%, rgba(255, 237, 78, 0.14) 0%, rgba(255, 237, 78, 0) 28%),
+                var(--surface-0);
         }
 
         .content {
@@ -208,15 +222,17 @@
         }
 
         .content-header {
-            background-color: white;
-            border-bottom: 2px solid #e9ecef;
-            padding: 1rem 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.88) 100%);
+            border-bottom: 1px solid var(--border-soft);
+            padding: 1rem 0 0.85rem;
+            backdrop-filter: blur(4px);
         }
 
         .content-header h1 {
             color: var(--accent-red);
             font-weight: bold;
             font-size: 2rem;
+            letter-spacing: -0.02em;
         }
 
         .card-title {
@@ -225,11 +241,15 @@
 
         .table-responsive {
             border-radius: 0.5rem;
+            border: 1px solid #eef0f4;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
         }
 
         .table td,
         .table th {
             vertical-align: middle;
+            padding-top: 0.9rem;
+            padding-bottom: 0.9rem;
         }
 
         .form-label {
@@ -240,6 +260,14 @@
         .form-control,
         .form-select {
             border-radius: 0.5rem;
+            border: 1px solid #d6dbe3;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: rgba(220, 38, 38, 0.45);
+            box-shadow: 0 0 0 0.24rem rgba(220, 38, 38, 0.12);
         }
 
         .actions-inline {
@@ -251,10 +279,17 @@
 
         /* Card Styling */
         .card {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            border: none;
-            border-radius: 0.8rem;
+            background: var(--surface-1);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #edf0f5;
+            border-radius: 0.95rem;
             border-top: 4px solid var(--accent-red);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
         }
 
         .card-header {
@@ -262,6 +297,11 @@
             color: white;
             border: none;
             font-weight: 600;
+            padding: 0.95rem 1.2rem;
+        }
+
+        .card-body {
+            padding: 1.2rem;
         }
 
         /* Alert Styling */
@@ -289,11 +329,21 @@
             transition: all 0.3s ease;
         }
 
+        .btn {
+            border-radius: 0.58rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
         .btn-primary:hover {
             background-color: #B91720;
             border-color: #B91720;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(227, 30, 36, 0.3);
+        }
+
+        .btn:focus-visible {
+            box-shadow: 0 0 0 0.24rem rgba(220, 38, 38, 0.2);
         }
 
         .btn-secondary {
@@ -322,6 +372,8 @@
         /* Table Styling */
         .table {
             background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
         .table thead {
@@ -333,16 +385,27 @@
             font-weight: 600;
             border: none;
             padding: 1rem;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #fcfcfd;
         }
 
         .table tbody tr:hover {
-            background-color: #f8f9fa;
+            background-color: #fff5f5;
+        }
+
+        .table tbody td {
+            border-color: #edf0f4;
         }
 
         /* Badge Styling */
         .badge {
             padding: 0.5rem 0.75rem;
             font-weight: 600;
+            border-radius: 999px;
         }
 
         /* Pagination Styling */
@@ -422,8 +485,77 @@
 
         /* Responsive */
         @media (max-width: 767px) {
+            .content .container-fluid {
+                padding-left: 0.7rem;
+                padding-right: 0.7rem;
+            }
+
+            .content-wrapper {
+                margin-top: 54px;
+                padding-bottom: 64px;
+            }
+
+            .content-header {
+                padding: 0.7rem 0 0.6rem;
+            }
+
             .content-header h1 {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
+            }
+
+            .main-header.navbar {
+                min-height: 54px;
+            }
+
+            .navbar-text {
+                font-size: 0.84rem;
+            }
+
+            .navbar-text .me-3 {
+                margin-right: 0.5rem !important;
+            }
+
+            .card {
+                border-radius: 0.8rem;
+            }
+
+            .card-header {
+                padding: 0.75rem 0.85rem;
+            }
+
+            .card-body {
+                padding: 0.85rem;
+            }
+
+            .table {
+                font-size: 0.86rem;
+            }
+
+            .table td,
+            .table th {
+                padding-top: 0.55rem;
+                padding-bottom: 0.55rem;
+            }
+
+            .form-label {
+                font-size: 0.84rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .form-control,
+            .form-select {
+                font-size: 0.9rem;
+                padding: 0.42rem 0.62rem;
+            }
+
+            .btn {
+                font-size: 0.83rem;
+                padding: 0.38rem 0.62rem;
+            }
+
+            .badge {
+                font-size: 0.72rem;
+                padding: 0.38rem 0.55rem;
             }
 
             .main-footer {
@@ -433,6 +565,50 @@
 
             .main-footer .footer-right {
                 margin-left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content .container-fluid {
+                padding-left: 0.55rem;
+                padding-right: 0.55rem;
+            }
+
+            .content-header h1 {
+                font-size: 1.12rem;
+            }
+
+            .card-header,
+            .card-body {
+                padding-left: 0.7rem;
+                padding-right: 0.7rem;
+            }
+
+            .table {
+                font-size: 0.8rem;
+            }
+
+            .table td,
+            .table th {
+                padding-top: 0.46rem;
+                padding-bottom: 0.46rem;
+            }
+
+            .btn {
+                font-size: 0.78rem;
+                padding: 0.34rem 0.54rem;
+            }
+
+            .actions-inline {
+                gap: 0.26rem;
+            }
+
+            .actions-inline .btn {
+                padding: 0.28rem 0.44rem;
+            }
+
+            .actions-inline .btn i {
+                margin-right: 0 !important;
             }
         }
     </style>
