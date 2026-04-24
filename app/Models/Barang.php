@@ -34,6 +34,14 @@ class Barang extends Model
     }
 
     /**
+     * Get cabang distribution items related to this barang.
+     */
+    public function cabangDistribusiItems(): HasMany
+    {
+        return $this->hasMany(CabangDistribusiItem::class);
+    }
+
+    /**
      * Get total barang masuk
      */
     public function getTotalMasuk()

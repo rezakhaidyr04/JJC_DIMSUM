@@ -696,6 +696,13 @@
                                 <p>Approval Void</p>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('stok-opname.rekap') }}" class="nav-link {{ request()->routeIs('stok-opname.rekap') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <p>Rekap Cabang Harian</p>
+                            </a>
+                        </li>
                     @endif
 
                     @if(auth()->user()?->isKaryawan())

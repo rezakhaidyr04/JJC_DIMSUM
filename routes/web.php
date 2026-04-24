@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('barang-masuk', BarangMasukController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::resource('barang-keluar', BarangKeluarController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::get('/void-requests', [VoidRequestController::class, 'index'])->name('void-requests.index');
+        Route::get('/stok-opname-harian/rekap', [StokOpnameController::class, 'rekap'])->name('stok-opname.rekap');
+        Route::get('/stok-opname-harian/rekap/pdf', [StokOpnameController::class, 'exportPdf'])->name('stok-opname.export-pdf');
 
         Route::post('barang-masuk/{barangMasuk}/approve-void', [BarangMasukController::class, 'approveVoid'])->name('barang-masuk.approve-void');
         Route::post('barang-keluar/{barangKeluar}/approve-void', [BarangKeluarController::class, 'approveVoid'])->name('barang-keluar.approve-void');
@@ -58,7 +60,8 @@ Route::middleware('auth')->group(function () {
         Route::post('barang-keluar/{barangKeluar}/request-void', [BarangKeluarController::class, 'requestVoid'])->name('barang-keluar.request-void');
 
         Route::get('/stok-opname-harian', [StokOpnameController::class, 'index'])->name('stok-opname.index');
-        Route::post('/stok-opname-harian', [StokOpnameController::class, 'store'])->name('stok-opname.store');
+        Route::post('/stok-opname-harian/pagi', [StokOpnameController::class, 'storeBerangkat'])->name('stok-opname.store-berangkat');
+        Route::post('/stok-opname-harian/malam', [StokOpnameController::class, 'storeSisa'])->name('stok-opname.store-sisa');
     });
 
     // Laporan

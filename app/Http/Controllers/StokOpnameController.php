@@ -3,78 +3,414 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
-use App\Models\StokOpname;
+use App\Models\BarangKeluar;
+use App\Models\BarangMasuk;
+use App\Models\Cabang;
+use App\Models\CabangDistribusi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class StokOpnameController extends Controller
 {
     /**
-     * Show daily blind stock opname form for karyawan.
+     * Form input operasional cabang harian (karyawan).
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $barangList = Barang::orderBy('nama_barang')->get(['id', 'nama_barang']);
+        $cabangList = Cabang::where('aktif', true)->orderBy('nama_cabang')->get();
 
-        $todayOpname = StokOpname::with('barang')
+        $selectedTanggal = old('tanggal', $request->query('tanggal', now()->toDateString()));
+        $selectedCabang = old('cabang_id', $request->query('cabang_id'));
+
+        $selectedHeader = null;
+        if ($selectedCabang) {
+            $selectedHeader = CabangDistribusi::with('items')
+                ->whereDate('tanggal', $selectedTanggal)
+                ->where('cabang_id', $selectedCabang)
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->first();
+        }
+
+        $existingItemsByBarang = $selectedHeader
+            ? $selectedHeader->items->keyBy('barang_id')
+            : collect();
+
+        $todayRecords = CabangDistribusi::with(['cabang', 'items.barang'])
             ->whereDate('tanggal', now()->toDateString())
             ->where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->get();
 
         return view('stok_opname.index', [
             'barangList' => $barangList,
-            'todayOpname' => $todayOpname,
+            'cabangList' => $cabangList,
+            'todayRecords' => $todayRecords,
+            'selectedTanggal' => $selectedTanggal,
+            'selectedCabang' => $selectedCabang,
+            'existingItemsByBarang' => $existingItemsByBarang,
         ]);
     }
 
     /**
-     * Store daily blind stock opname input.
+     * Simpan barang dibawa ke cabang (input pagi).
      */
-    public function store(Request $request): RedirectResponse
+    public function storeBerangkat(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'opname' => ['required', 'array', 'min:1'],
-            'opname.*.barang_id' => ['required', 'exists:barang,id'],
-            'opname.*.jumlah_fisik' => ['required', 'integer', 'min:0'],
+            'cabang_id' => ['required', 'exists:cabangs,id'],
+            'tanggal' => ['required', 'date'],
+            'catatan' => ['nullable', 'string', 'max:500'],
+            'berangkat' => ['required', 'array', 'min:1'],
+            'berangkat.*.barang_id' => ['required', 'exists:barang,id'],
+            'berangkat.*.jumlah_bawa' => ['required', 'integer', 'min:0'],
         ]);
 
-        $tanggal = now()->toDateString();
-        $userId = auth()->id();
+        $rows = collect($validated['berangkat'])
+            ->filter(function (array $row) {
+                return ((int) $row['jumlah_bawa']) > 0;
+            })
+            ->values();
 
-        DB::transaction(function () use ($validated, $tanggal, $userId) {
-            foreach ($validated['opname'] as $entry) {
-                $barang = Barang::findOrFail($entry['barang_id']);
+        if ($rows->isEmpty()) {
+            return redirect()->back()->withInput()->withErrors([
+                'berangkat' => 'Minimal ada satu barang yang dibawa ke cabang pada input pagi.',
+            ]);
+        }
 
-                $jumlahFisik = (int) $entry['jumlah_fisik'];
-                $jumlahSistem = (int) $barang->stok;
-                $selisih = $jumlahFisik - $jumlahSistem;
-                $status = match (true) {
-                    $selisih > 0 => 'surplus',
-                    $selisih < 0 => 'minus',
-                    default => 'match',
-                };
+        DB::transaction(function () use ($validated, $rows) {
+            $header = $this->findOrCreateHeader($validated['tanggal'], (int) $validated['cabang_id']);
 
-                StokOpname::updateOrCreate(
-                    [
+            if (!empty($validated['catatan'])) {
+                $header->update(['catatan' => $validated['catatan']]);
+            }
+
+            foreach ($rows as $row) {
+                $barang = Barang::findOrFail($row['barang_id']);
+                $jumlahBawa = (int) $row['jumlah_bawa'];
+                $item = $header->items()->where('barang_id', $barang->id)->first();
+
+                if ($item && $item->jumlah_sisa > $jumlahBawa) {
+                    abort(422, 'Jumlah dibawa tidak boleh kurang dari jumlah sisa yang sudah tercatat malam hari.');
+                }
+
+                if ($item && $item->barang_keluar_id) {
+                    $barangKeluar = BarangKeluar::find($item->barang_keluar_id);
+
+                    if ($barangKeluar) {
+                        $selisihBawa = $jumlahBawa - $item->jumlah_bawa;
+
+                        if ($selisihBawa > 0) {
+                            $barang->decrement('stok', $selisihBawa);
+                        } elseif ($selisihBawa < 0) {
+                            $barang->increment('stok', abs($selisihBawa));
+                        }
+
+                        if ($jumlahBawa === 0) {
+                            $barangKeluar->delete();
+                            $item->barang_keluar_id = null;
+                        } else {
+                            $barangKeluar->update([
+                                'jumlah' => $jumlahBawa,
+                                'tanggal' => $validated['tanggal'],
+                                'updated_at' => now(),
+                            ]);
+                        }
+                    }
+                } else {
+                    $barangKeluar = BarangKeluar::create([
                         'barang_id' => $barang->id,
-                        'user_id' => $userId,
-                        'tanggal' => $tanggal,
-                    ],
-                    [
-                        'jumlah_fisik' => $jumlahFisik,
-                        'jumlah_sistem' => $jumlahSistem,
-                        'selisih' => $selisih,
-                        'status' => $status,
-                    ]
-                );
+                        'user_id' => auth()->id(),
+                        'jumlah' => $jumlahBawa,
+                        'tanggal' => $validated['tanggal'],
+                        'void_status' => 'none',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    $barang->decrement('stok', $jumlahBawa);
+                    if ($item) {
+                        $item->barang_keluar_id = $barangKeluar->id;
+                    }
+                }
+
+                $jumlahSisa = (int) ($item->jumlah_sisa ?? 0);
+                $jumlahTerpakai = $jumlahBawa - $jumlahSisa;
+
+                if (!$item) {
+                    $header->items()->create([
+                        'barang_id' => $barang->id,
+                        'jumlah_bawa' => $jumlahBawa,
+                        'jumlah_sisa' => 0,
+                        'jumlah_terpakai' => $jumlahBawa,
+                        'barang_keluar_id' => $barangKeluar->id ?? null,
+                        'barang_masuk_id' => null,
+                    ]);
+                } else {
+                    $item->update([
+                        'jumlah_bawa' => $jumlahBawa,
+                        'jumlah_terpakai' => $jumlahTerpakai,
+                        'barang_keluar_id' => $item->barang_keluar_id,
+                    ]);
+                }
             }
         });
 
         return redirect()
-            ->route('stok-opname.index')
-            ->with('success', 'Stok opname harian berhasil disimpan. Sistem otomatis menandai jika ada selisih.');
+            ->route('stok-opname.index', [
+                'tanggal' => $validated['tanggal'],
+                'cabang_id' => $validated['cabang_id'],
+            ])
+            ->with('success', 'Input pagi berhasil disimpan. Barang keluar sudah otomatis tercatat.');
+    }
+
+    /**
+     * Simpan barang sisa dari cabang (input malam).
+     */
+    public function storeSisa(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'cabang_id' => ['required', 'exists:cabangs,id'],
+            'tanggal' => ['required', 'date'],
+            'sisa' => ['required', 'array', 'min:1'],
+            'sisa.*.barang_id' => ['required', 'exists:barang,id'],
+            'sisa.*.jumlah_sisa' => ['required', 'integer', 'min:0'],
+        ]);
+
+        $header = CabangDistribusi::with('items')
+            ->whereDate('tanggal', $validated['tanggal'])
+            ->where('cabang_id', $validated['cabang_id'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->first();
+
+        if (!$header) {
+            return redirect()->back()->withInput()->withErrors([
+                'sisa' => 'Input malam tidak bisa disimpan. Silakan input data keberangkatan pagi terlebih dahulu.',
+            ]);
+        }
+
+        $itemMap = $header->items->keyBy('barang_id');
+
+        DB::transaction(function () use ($validated, $itemMap, $header) {
+            foreach ($validated['sisa'] as $row) {
+                $barang = Barang::findOrFail($row['barang_id']);
+                $jumlahSisaBaru = (int) $row['jumlah_sisa'];
+                $item = $itemMap->get($barang->id);
+
+                if (!$item) {
+                    if ($jumlahSisaBaru > 0) {
+                        abort(422, 'Jumlah sisa hanya bisa diisi untuk barang yang dibawa di pagi hari.');
+                    }
+
+                    continue;
+                }
+
+                if ($jumlahSisaBaru > $item->jumlah_bawa) {
+                    abort(422, 'Jumlah sisa tidak boleh lebih besar dari jumlah dibawa.');
+                }
+
+                $jumlahSisaLama = (int) $item->jumlah_sisa;
+                $selisihSisa = $jumlahSisaBaru - $jumlahSisaLama;
+
+                if ($selisihSisa !== 0) {
+                    if ($item->barang_masuk_id) {
+                        $barangMasuk = BarangMasuk::find($item->barang_masuk_id);
+
+                        if ($barangMasuk) {
+                            if ($jumlahSisaBaru === 0) {
+                                $barang->decrement('stok', $jumlahSisaLama);
+                                $barangMasuk->delete();
+                                $item->barang_masuk_id = null;
+                            } else {
+                                $barangMasuk->update([
+                                    'jumlah' => $jumlahSisaBaru,
+                                    'tanggal' => $validated['tanggal'],
+                                    'updated_at' => now(),
+                                ]);
+
+                                if ($selisihSisa > 0) {
+                                    $barang->increment('stok', $selisihSisa);
+                                } else {
+                                    $barang->decrement('stok', abs($selisihSisa));
+                                }
+                            }
+                        }
+                    } elseif ($jumlahSisaBaru > 0) {
+                        $barangMasuk = BarangMasuk::create([
+                            'barang_id' => $barang->id,
+                            'user_id' => auth()->id(),
+                            'jumlah' => $jumlahSisaBaru,
+                            'tanggal' => $validated['tanggal'],
+                            'void_status' => 'none',
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+
+                        $item->barang_masuk_id = $barangMasuk->id;
+                        $barang->increment('stok', $jumlahSisaBaru);
+                    }
+                }
+
+                $item->update([
+                    'jumlah_sisa' => $jumlahSisaBaru,
+                    'jumlah_terpakai' => $item->jumlah_bawa - $jumlahSisaBaru,
+                    'barang_masuk_id' => $item->barang_masuk_id,
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('stok-opname.index', [
+                'tanggal' => $validated['tanggal'],
+                'cabang_id' => $validated['cabang_id'],
+            ])
+            ->with('success', 'Input malam berhasil disimpan. Barang sisa sudah otomatis tercatat sebagai barang masuk.');
+    }
+
+    /**
+     * Rekap operasional cabang harian untuk owner.
+     */
+    public function rekap(Request $request): View
+    {
+        abort_unless(auth()->user()?->isOwner(), 403);
+
+        $bulan = $request->query('bulan', now()->format('Y-m'));
+        $cabangId = $request->query('cabang_id');
+        $periodeMulai = now()->createFromFormat('Y-m', $bulan)->startOfMonth()->toDateString();
+        $periodeSelesai = now()->createFromFormat('Y-m', $bulan)->endOfMonth()->toDateString();
+
+        $query = CabangDistribusi::with(['cabang', 'user', 'items.barang'])
+            ->whereBetween('tanggal', [$periodeMulai, $periodeSelesai])
+            ->latest();
+
+        if ($cabangId) {
+            $query->where('cabang_id', $cabangId);
+        }
+
+        $records = $query->get();
+        $summaryByCabang = $this->buildSummaryByCabang($records);
+        $konsumsiBarang = $this->buildKonsumsiBarang($records);
+        $cabangList = Cabang::where('aktif', true)->orderBy('nama_cabang')->get();
+
+        return view('stok_opname.rekap', [
+            'records' => $records,
+            'summaryByCabang' => $summaryByCabang,
+            'konsumsiBarang' => $konsumsiBarang,
+            'bulan' => $bulan,
+            'periodeMulai' => $periodeMulai,
+            'periodeSelesai' => $periodeSelesai,
+            'cabangList' => $cabangList,
+            'selectedCabang' => $cabangId,
+        ]);
+    }
+
+    /**
+     * Export rekap operasional cabang harian ke PDF untuk owner.
+     */
+    public function exportPdf(Request $request)
+    {
+        abort_unless(auth()->user()?->isOwner(), 403);
+
+        $bulan = $request->query('bulan', now()->format('Y-m'));
+        $cabangId = $request->query('cabang_id');
+        $periodeMulai = now()->createFromFormat('Y-m', $bulan)->startOfMonth()->toDateString();
+        $periodeSelesai = now()->createFromFormat('Y-m', $bulan)->endOfMonth()->toDateString();
+
+        $query = CabangDistribusi::with(['cabang', 'user', 'items.barang'])
+            ->whereBetween('tanggal', [$periodeMulai, $periodeSelesai])
+            ->latest();
+
+        if ($cabangId) {
+            $query->where('cabang_id', $cabangId);
+        }
+
+        $records = $query->get();
+        $summaryByCabang = $this->buildSummaryByCabang($records);
+        $konsumsiBarang = $this->buildKonsumsiBarang($records);
+
+        $pdf = Pdf::loadView('stok_opname.pdf', [
+            'records' => $records,
+            'summaryByCabang' => $summaryByCabang,
+            'konsumsiBarang' => $konsumsiBarang,
+            'bulan' => $bulan,
+            'periodeMulai' => $periodeMulai,
+            'periodeSelesai' => $periodeSelesai,
+            'logoBase64' => $this->getLogoBase64(),
+        ])->setPaper('a4', 'landscape')->setOption('defaultFont', 'Arial');
+
+        return $pdf->download('rekap-operasional-cabang-bulanan-' . str_replace('-', '', $bulan) . '.pdf');
+    }
+
+    private function buildSummaryByCabang(Collection $records): Collection
+    {
+        return $records
+            ->groupBy(function (CabangDistribusi $record) {
+                return $record->cabang?->nama_cabang ?? '-';
+            })
+            ->map(function (Collection $group) {
+                $items = $group->flatMap(function (CabangDistribusi $record) {
+                    return $record->items;
+                });
+
+                return [
+                    'total_bawa' => $items->sum('jumlah_bawa'),
+                    'total_sisa' => $items->sum('jumlah_sisa'),
+                    'total_terpakai' => $items->sum('jumlah_terpakai'),
+                    'total_transaksi' => $group->count(),
+                ];
+            });
+    }
+
+    private function buildKonsumsiBarang(Collection $records): Collection
+    {
+        return $records
+            ->flatMap(function (CabangDistribusi $record) {
+                return $record->items;
+            })
+            ->groupBy(function ($item) {
+                return $item->barang?->nama_barang ?? '-';
+            })
+            ->map(function (Collection $group) {
+                return (int) $group->sum('jumlah_terpakai');
+            })
+            ->sortDesc()
+            ->take(12);
+    }
+
+    private function getLogoBase64(): ?string
+    {
+        $logoPath = public_path('images/logo-login.png');
+
+        if (!file_exists($logoPath)) {
+            return null;
+        }
+
+        $logoContents = file_get_contents($logoPath);
+
+        if ($logoContents === false) {
+            return null;
+        }
+
+        return 'data:image/png;base64,' . base64_encode($logoContents);
+    }
+
+    private function findOrCreateHeader(string $tanggal, int $cabangId): CabangDistribusi
+    {
+        return CabangDistribusi::firstOrCreate(
+            [
+                'tanggal' => $tanggal,
+                'cabang_id' => $cabangId,
+                'user_id' => auth()->id(),
+            ],
+            [
+                'catatan' => null,
+            ]
+        );
     }
 }
