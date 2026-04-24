@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
     /**
      * Display stock report
      */
-    public function index(Request $request): View|StreamedResponse
+    public function index(Request $request): View|StreamedResponse|Response
     {
         $validated = $request->validate([
             'tanggal_mulai' => ['nullable', 'date'],
@@ -32,11 +34,15 @@ class LaporanController extends Controller
         }
 
         if ($export === 'pdf') {
-            return response()->view('laporan.pdf', [
+            $filename = 'laporan-stok-' . now()->format('Ymd_His') . '.pdf';
+            
+            $pdf = Pdf::loadView('laporan.pdf', [
                 'laporan' => $laporan,
                 'tanggalMulai' => $tanggalMulai,
                 'tanggalSelesai' => $tanggalSelesai,
-            ]);
+            ])->setPaper('a4', 'portrait')->setOption('defaultFont', 'Arial');
+
+            return $pdf->download($filename);
         }
 
         return view('laporan.index', [

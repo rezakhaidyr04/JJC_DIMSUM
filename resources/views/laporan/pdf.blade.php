@@ -222,12 +222,8 @@
         </tbody>
     </table>
 
-    <div class="hint">Tips: gunakan Save as PDF dari dialog print browser.</div>
+    <div class="hint">Laporan ini telah berhasil diunduh dalam format PDF</div>
 
-    <script>
-        window.addEventListener('load', function () {
-            window.print();
-        });
-    </script>
+
 </body>
 </html>
