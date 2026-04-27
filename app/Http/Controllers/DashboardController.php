@@ -46,8 +46,8 @@ class DashboardController extends Controller
             $date = now()->subDays($i)->format('Y-m-d');
             $labels[] = now()->subDays($i)->format('d M');
 
-            $masuk = BarangMasuk::whereDate('tanggal', $date)->sum('jumlah');
-            $keluar = BarangKeluar::whereDate('tanggal', $date)->sum('jumlah');
+            $masuk = BarangMasuk::whereDate('tanggal_masuk', $date)->sum('jumlah');
+            $keluar = BarangKeluar::whereDate('tanggal_keluar', $date)->sum('jumlah');
 
             $masukData[] = $masuk;
             $keluarData[] = $keluar;

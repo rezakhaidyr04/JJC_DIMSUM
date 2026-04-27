@@ -76,14 +76,14 @@ class LaporanController extends Controller
             ->whereNull('deleted_at');
 
         if ($tanggalMulai && $tanggalSelesai) {
-            $masukQuery->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);
-            $keluarQuery->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);
+            $masukQuery->whereBetween('tanggal_masuk', [$tanggalMulai, $tanggalSelesai]);
+            $keluarQuery->whereBetween('tanggal_keluar', [$tanggalMulai, $tanggalSelesai]);
         } elseif ($tanggalMulai) {
-            $masukQuery->whereDate('tanggal', '>=', $tanggalMulai);
-            $keluarQuery->whereDate('tanggal', '>=', $tanggalMulai);
+            $masukQuery->whereDate('tanggal_masuk', '>=', $tanggalMulai);
+            $keluarQuery->whereDate('tanggal_keluar', '>=', $tanggalMulai);
         } elseif ($tanggalSelesai) {
-            $masukQuery->whereDate('tanggal', '<=', $tanggalSelesai);
-            $keluarQuery->whereDate('tanggal', '<=', $tanggalSelesai);
+            $masukQuery->whereDate('tanggal_masuk', '<=', $tanggalSelesai);
+            $keluarQuery->whereDate('tanggal_keluar', '<=', $tanggalSelesai);
         }
 
         $masukRows = $masukQuery->get()->map(function (BarangMasuk $item) {
