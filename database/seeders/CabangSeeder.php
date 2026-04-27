@@ -13,16 +13,16 @@ class CabangSeeder extends Seeder
     public function run(): void
     {
         $branches = [
-            ['kode_cabang' => 'CBG-01', 'nama_cabang' => 'Cabang Cikampek Barat'],
-            ['kode_cabang' => 'CBG-02', 'nama_cabang' => 'Cabang Cikampek Timur'],
-            ['kode_cabang' => 'CBG-03', 'nama_cabang' => 'Cabang Purwasari'],
-            ['kode_cabang' => 'CBG-04', 'nama_cabang' => 'Cabang Karawang Kota'],
-            ['kode_cabang' => 'CBG-05', 'nama_cabang' => 'Cabang Klari'],
-            ['kode_cabang' => 'CBG-06', 'nama_cabang' => 'Cabang Telukjambe'],
-            ['kode_cabang' => 'CBG-07', 'nama_cabang' => 'Cabang Jatisari'],
-            ['kode_cabang' => 'CBG-08', 'nama_cabang' => 'Cabang Dawuan'],
-            ['kode_cabang' => 'CBG-09', 'nama_cabang' => 'Cabang Kotabaru'],
-            ['kode_cabang' => 'CBG-10', 'nama_cabang' => 'Cabang Rengasdengklok'],
+            ['kode_cabang' => 'CAB-01', 'nama_cabang' => 'Cab 1 Pawarengan'],
+            ['kode_cabang' => 'CAB-02', 'nama_cabang' => 'Cab 2 Regency'],
+            ['kode_cabang' => 'CAB-03', 'nama_cabang' => 'Cab 3 Angkringan Sukaseri'],
+            ['kode_cabang' => 'CAB-04', 'nama_cabang' => 'Cab 4 Angkringan Pawarengan'],
+            ['kode_cabang' => 'CAB-05', 'nama_cabang' => 'Cab 5 Stand HK Kamojing'],
+            ['kode_cabang' => 'CAB-06', 'nama_cabang' => 'Cab 6 Cikopak Purwakarta'],
+            ['kode_cabang' => 'CAB-07', 'nama_cabang' => 'Cab 7 Munjul Purwakarta'],
+            ['kode_cabang' => 'CAB-08', 'nama_cabang' => 'Cab 8 Telor Gulung Niceso Senopati'],
+            ['kode_cabang' => 'CAB-09', 'nama_cabang' => 'Cab 9 O!Save Sukaseri'],
+            ['kode_cabang' => 'CAB-10', 'nama_cabang' => 'Cab 10 Maracang Purwakarta'],
         ];
 
         foreach ($branches as $branch) {

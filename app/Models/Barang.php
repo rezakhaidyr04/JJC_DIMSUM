@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Barang extends Model
 {
@@ -15,6 +16,8 @@ class Barang extends Model
     protected $fillable = [
         'nama_barang',
         'stok',
+        'cabang_id',
+        'lokasi_default_id',
     ];
 
     /**
@@ -39,6 +42,22 @@ class Barang extends Model
     public function cabangDistribusiItems(): HasMany
     {
         return $this->hasMany(CabangDistribusiItem::class);
+    }
+
+    /**
+     * Get the cabang this barang belongs to
+     */
+    public function cabang(): BelongsTo
+    {
+        return $this->belongsTo(Cabang::class);
+    }
+
+    /**
+     * Get the default storage location for this barang
+     */
+    public function lokasiDefault(): BelongsTo
+    {
+        return $this->belongsTo(LokasiPenyimpanan::class, 'lokasi_default_id');
     }
 
     /**

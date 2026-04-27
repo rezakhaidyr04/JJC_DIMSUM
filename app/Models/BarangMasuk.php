@@ -16,8 +16,10 @@ class BarangMasuk extends Model
     protected $fillable = [
         'barang_id',
         'user_id',
+        'cabang_id',
+        'lokasi_id',
         'jumlah',
-        'tanggal',
+        'tanggal_masuk',
         'void_status',
         'void_reason',
         'void_requested_by',
@@ -29,7 +31,7 @@ class BarangMasuk extends Model
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal_masuk' => 'date',
         'void_requested_at' => 'datetime',
         'void_approved_at' => 'datetime',
         'created_at' => 'datetime',
@@ -51,6 +53,22 @@ class BarangMasuk extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the cabang for this barang masuk
+     */
+    public function cabang(): BelongsTo
+    {
+        return $this->belongsTo(Cabang::class);
+    }
+
+    /**
+     * Get the lokasi penyimpanan for this barang masuk
+     */
+    public function lokasi(): BelongsTo
+    {
+        return $this->belongsTo(LokasiPenyimpanan::class, 'lokasi_id');
     }
 
     /**

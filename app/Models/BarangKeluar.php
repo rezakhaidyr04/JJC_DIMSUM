@@ -16,8 +16,11 @@ class BarangKeluar extends Model
     protected $fillable = [
         'barang_id',
         'user_id',
+        'cabang_id',
+        'lokasi_id',
+        'barang_masuk_id',
         'jumlah',
-        'tanggal',
+        'tanggal_keluar',
         'void_status',
         'void_reason',
         'void_requested_by',
@@ -29,7 +32,7 @@ class BarangKeluar extends Model
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal_keluar' => 'date',
         'void_requested_at' => 'datetime',
         'void_approved_at' => 'datetime',
         'created_at' => 'datetime',
@@ -43,6 +46,30 @@ class BarangKeluar extends Model
     public function barang(): BelongsTo
     {
         return $this->belongsTo(Barang::class);
+    }
+
+    /**
+     * Get the cabang for this barang keluar
+     */
+    public function cabang(): BelongsTo
+    {
+        return $this->belongsTo(Cabang::class);
+    }
+
+    /**
+     * Get the lokasi penyimpanan for this barang keluar
+     */
+    public function lokasi(): BelongsTo
+    {
+        return $this->belongsTo(LokasiPenyimpanan::class, 'lokasi_id');
+    }
+
+    /**
+     * Get the barang masuk record used for FIFO (reference untuk tracking)
+     */
+    public function barangMasukFifo(): BelongsTo
+    {
+        return $this->belongsTo(BarangMasuk::class, 'barang_masuk_id');
     }
 
     /**

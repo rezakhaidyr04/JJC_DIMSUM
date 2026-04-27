@@ -25,4 +25,12 @@ class Cabang extends Model
     {
         return $this->hasMany(CabangDistribusi::class);
     }
+
+    /**
+     * Get all lokasi penyimpanan at this cabang
+     */
+    public function lokasiPenyimpanans(): HasMany
+    {
+        return $this->hasMany(LokasiPenyimpanan::class);
+    }
 }

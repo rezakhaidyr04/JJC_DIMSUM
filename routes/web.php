@@ -8,6 +8,7 @@ use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\VoidRequestController;
+use App\Http\Controllers\RiwayatTransaksiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('barang', BarangController::class)->only(['index']);
     Route::resource('barang-masuk', BarangMasukController::class)->only(['index']);
     Route::resource('barang-keluar', BarangKeluarController::class)->only(['index']);
+    Route::get('/riwayat-transaksi', [RiwayatTransaksiController::class, 'index'])->name('riwayat-transaksi');
 
     // Full access for owner
     Route::middleware('owner')->group(function () {

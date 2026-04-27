@@ -693,6 +693,13 @@
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a href="{{ route('riwayat-transaksi') }}" class="nav-link {{ request()->routeIs('riwayat-transaksi') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-history"></i>
+                            <p>Riwayat Transaksi</p>
+                        </a>
+                    </li>
+
                     @if(auth()->user()?->isOwner())
                         <li class="nav-item">
                             <a href="{{ route('void-requests.index') }}" class="nav-link {{ request()->routeIs('void-requests.*') ? 'active' : '' }}">
