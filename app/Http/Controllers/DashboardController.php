@@ -20,6 +20,9 @@ class DashboardController extends Controller
         // Get data for chart (last 7 days)
         $chartData = $this->getChartData();
         $recentActivities = $this->getRecentActivities();
+        
+        // Get low stock notifications
+        $lowStockItems = Barang::getLowStockNotifications();
 
         return view('dashboard.index', compact(
             'totalBarang',
@@ -27,7 +30,8 @@ class DashboardController extends Controller
             'totalKeluar',
             'totalStok',
             'chartData',
-            'recentActivities'
+            'recentActivities',
+            'lowStockItems'
         ));
     }
 

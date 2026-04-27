@@ -466,6 +466,87 @@
                 window.location.reload();
             }, 30000);
         @endif
+
+        // Low Stock Notification Popup
+        document.addEventListener('DOMContentLoaded', function () {
+            const lowStockItems = @json($lowStockItems);
+            
+            if (lowStockItems && lowStockItems.length > 0) {
+                showLowStockNotification(lowStockItems);
+            }
+        });
+
+        function showLowStockNotification(items) {
+            // Separate items by status
+            const habisItems = items.filter(item => item.stok === 0);
+            const hampirHabisItems = items.filter(item => item.stok > 0 && item.stok <= 20);
+
+            // Build HTML content for the popup
+            let htmlContent = '<div style="text-align: left; max-height: 400px; overflow-y: auto;">';
+            
+            // Show items that are completely out of stock first
+            if (habisItems.length > 0) {
+                htmlContent += '<div style="margin-bottom: 1.5rem;">';
+                htmlContent += '<h5 style="color: #c62833; margin-bottom: 0.75rem; font-weight: 700;">';
+                htmlContent += '<i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>Stok Habis</h5>';
+                htmlContent += '<ul style="list-style: none; padding: 0; margin: 0;">';
+                
+                habisItems.forEach(item => {
+                    htmlContent += `<li style="padding: 0.6rem 0; border-bottom: 1px solid #f0d6d8; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: #1f2937;">${item.nama_barang}</span>
+                        <span style="background-color: #fee2e2; color: #991b1b; padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 700;">Stok: ${item.stok}</span>
+                    </li>`;
+                });
+                
+                htmlContent += '</ul></div>';
+            }
+            
+            // Show items with low stock
+            if (hampirHabisItems.length > 0) {
+                htmlContent += '<div>';
+                htmlContent += '<h5 style="color: #f59e0b; margin-bottom: 0.75rem; font-weight: 700;">';
+                htmlContent += '<i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>Stok Hampir Habis</h5>';
+                htmlContent += '<ul style="list-style: none; padding: 0; margin: 0;">';
+                
+                hampirHabisItems.forEach(item => {
+                    htmlContent += `<li style="padding: 0.6rem 0; border-bottom: 1px solid #fef3c7; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: #1f2937;">${item.nama_barang}</span>
+                        <span style="background-color: #fef3c7; color: #92400e; padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 700;">Stok: ${item.stok}</span>
+                    </li>`;
+                });
+                
+                htmlContent += '</ul></div>';
+            }
+            
+            htmlContent += '</div>';
+
+            // Show SweetAlert popup
+            Swal.fire({
+                title: '⚠️ Notifikasi Stok Barang',
+                html: htmlContent,
+                icon: 'warning',
+                confirmButtonText: 'Tindak Lanjuti',
+                confirmButtonColor: '#c62833',
+                cancelButtonText: 'Tutup',
+                showCancelButton: true,
+                didOpen: (modal) => {
+                    // Highlight the popup title
+                    const titleElement = modal.querySelector('.swal2-title');
+                    if (titleElement) {
+                        titleElement.style.fontSize = '1.3rem';
+                        titleElement.style.color = '#c62833';
+                    }
+                },
+                willClose: () => {
+                    // Additional action when popup closes
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to barang page when user clicks "Tindak Lanjuti"
+                    window.location.href = '{{ route("barang.index") }}';
+                }
+            });
+        }
     </script>
     @endpush
 @endsection
