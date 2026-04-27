@@ -26,10 +26,18 @@
 
         * { box-sizing: border-box; }
 
+        html {
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            overflow-x: hidden;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #ffffff;
             display: flex;
             padding: 0;
@@ -38,7 +46,7 @@
         .login-wrapper {
             display: flex;
             width: 100%;
-            min-height: 100vh;
+            min-height: 100dvh;
         }
 
         .login-left {
@@ -66,6 +74,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
             position: relative;
             z-index: 0;
         }
@@ -79,6 +88,7 @@
             justify-content: center;
             padding: 40px 30px;
             overflow-y: auto;
+            min-width: 0;
         }
 
         .auth-container {
@@ -183,6 +193,7 @@
             border-radius: 8px;
             border: 1.5px solid var(--field-border);
             padding: 11px 13px;
+            min-height: 44px;
             font-size: 0.92rem;
             background: #ffffff;
             color: var(--text-main);
@@ -254,6 +265,7 @@
             color: #ffffff;
             font-weight: 700;
             padding: 13px 16px;
+            min-height: 46px;
             font-size: 0.98rem;
             box-shadow: 0 4px 14px rgba(198, 40, 51, 0.3);
             cursor: pointer;
@@ -318,21 +330,27 @@
             color: var(--brand-red-dark);
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 991.98px) {
             .login-wrapper {
                 flex-direction: column;
             }
 
             .login-left {
-                min-height: 350px;
+                min-height: 220px;
             }
 
             .login-right {
-                padding: 30px 20px;
+                padding: 28px 20px;
             }
 
             .auth-container {
                 max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-left {
+                min-height: 180px;
             }
 
             .page-header-logo {
@@ -342,6 +360,30 @@
 
             .auth-title {
                 font-size: 22px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .login-left {
+                display: none;
+            }
+
+            .login-right {
+                padding: 18px 12px;
+                justify-content: flex-start;
+            }
+
+            .auth-body {
+                padding: 20px 16px;
+            }
+
+            .form-label {
+                font-size: 0.88rem;
+            }
+
+            .btn-brand {
+                font-size: 0.92rem;
+                letter-spacing: 0.3px;
             }
         }
     </style>

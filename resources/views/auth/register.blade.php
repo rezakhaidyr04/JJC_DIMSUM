@@ -23,10 +23,18 @@
 
         * { box-sizing: border-box; }
 
+        html {
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
+            min-width: 320px;
+            overflow-x: hidden;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: radial-gradient(circle at 85% 14%, rgba(212, 164, 55, 0.18), transparent 30%),
                         linear-gradient(145deg, #3a1f1f 0%, var(--brand-red-dark) 42%, var(--brand-red) 100%);
             display: flex;
@@ -108,6 +116,7 @@
             border-radius: 10px;
             border: 1px solid #d8cabc;
             padding: 10px 12px;
+            min-height: 44px;
             font-size: 0.95rem;
             background: #fffdf9;
         }
@@ -125,6 +134,7 @@
             color: #fff;
             font-weight: 600;
             padding: 11px 14px;
+            min-height: 46px;
         }
 
         .btn-brand:hover {
@@ -148,6 +158,73 @@
         }
 
         .auth-foot a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 14px;
+            }
+
+            .page-header {
+                margin-bottom: 12px;
+                gap: 9px;
+            }
+
+            .page-header-title {
+                font-size: 1.32rem;
+            }
+
+            .auth-head {
+                padding: 22px 16px;
+            }
+
+            .auth-head h1 {
+                font-size: 1.75rem;
+            }
+
+            .auth-body {
+                padding: 18px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 7px;
+            }
+
+            .page-header-logo {
+                width: 48px;
+                height: 48px;
+            }
+
+            .page-header-title {
+                font-size: 1.16rem;
+            }
+
+            .auth-head h1 {
+                font-size: 1.5rem;
+            }
+
+            .auth-head p {
+                font-size: 0.88rem;
+            }
+
+            .auth-body {
+                padding: 16px 12px;
+            }
+
+            .form-label {
+                font-size: 0.88rem;
+            }
+
+            .btn-brand {
+                font-size: 0.92rem;
+            }
+        }
     </style>
 </head>
 <body>

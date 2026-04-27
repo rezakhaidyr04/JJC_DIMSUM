@@ -43,6 +43,9 @@ class BarangKeluarController extends Controller
             'tanggal' => 'required|date',
         ]);
 
+        $validated['tanggal_keluar'] = $validated['tanggal'];
+        unset($validated['tanggal']);
+
         $validated['user_id'] = auth()->id();
         $validated['created_at'] = now();
         $validated['updated_at'] = now();
@@ -92,6 +95,9 @@ class BarangKeluarController extends Controller
             'jumlah' => 'required|integer|min:1',
             'tanggal' => 'required|date',
         ]);
+
+        $validated['tanggal_keluar'] = $validated['tanggal'];
+        unset($validated['tanggal']);
 
         // Calculate the difference in jumlah
         $jumlahDiff = $validated['jumlah'] - $barangKeluar->jumlah;

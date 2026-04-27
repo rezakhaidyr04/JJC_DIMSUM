@@ -39,13 +39,29 @@
             --shadow-hover: 0 14px 36px rgba(17, 24, 39, 0.12);
         }
 
+        html {
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #1f2937;
+            min-width: 320px;
+            min-height: 100vh;
+            overflow-x: hidden;
             background:
                 radial-gradient(circle at 8% 0%, rgba(227, 30, 36, 0.06) 0%, rgba(227, 30, 36, 0) 34%),
                 radial-gradient(circle at 95% 12%, rgba(255, 237, 78, 0.14) 0%, rgba(255, 237, 78, 0) 28%),
                 var(--surface-0);
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            font: inherit;
         }
 
         .content {
@@ -117,6 +133,29 @@
 
         .navbar-text {
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.55rem;
+            flex-wrap: wrap;
+            min-width: 0;
+        }
+
+        .navbar-user-name {
+            display: inline-flex;
+            align-items: center;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .navbar-role-badge {
+            white-space: nowrap;
+        }
+
+        .navbar-logout-form {
+            margin: 0;
         }
 
         .navbar-text .badge {
@@ -223,6 +262,8 @@
             background-color: #f8f9fa;
             margin-top: 57px;
             padding-bottom: 72px;
+            min-height: calc(100vh - 57px);
+            overflow-x: clip;
         }
 
         .content-header {
@@ -247,6 +288,7 @@
             border-radius: 0.5rem;
             border: 1px solid #eef0f4;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+            -webkit-overflow-scrolling: touch;
         }
 
         .table td,
@@ -513,10 +555,11 @@
 
             .navbar-text {
                 font-size: 0.84rem;
+                gap: 0.4rem;
             }
 
-            .navbar-text .me-3 {
-                margin-right: 0.5rem !important;
+            .navbar-user-name {
+                max-width: 140px;
             }
 
             .card {
@@ -539,6 +582,10 @@
             .table th {
                 padding-top: 0.55rem;
                 padding-bottom: 0.55rem;
+            }
+
+            .table-responsive > .table {
+                min-width: 680px;
             }
 
             .form-label {
@@ -614,6 +661,25 @@
             .actions-inline .btn i {
                 margin-right: 0 !important;
             }
+
+            .navbar-user-name {
+                max-width: 100px;
+                font-size: 0.78rem;
+            }
+
+            .navbar-role-badge {
+                display: none;
+            }
+
+            .navbar-text .btn {
+                font-size: 0.74rem;
+                padding: 0.3rem 0.48rem;
+            }
+
+            .content-wrapper {
+                margin-top: 52px;
+                min-height: calc(100vh - 52px);
+            }
         }
     </style>
 
@@ -635,10 +701,10 @@
                 </li>
             </ul>
 
-            <div class="navbar-text ms-auto d-flex align-items-center">
-                <span class="me-3"><i class="fas fa-user-circle me-2"></i>{{ Auth::user()->name }}</span>
-                <span class="badge text-uppercase me-3">{{ Auth::user()->role }}</span>
-                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+            <div class="navbar-text ms-auto">
+                <span class="navbar-user-name"><i class="fas fa-user-circle me-2"></i>{{ Auth::user()->name }}</span>
+                <span class="badge text-uppercase navbar-role-badge">{{ Auth::user()->role }}</span>
+                <form method="POST" action="{{ route('logout') }}" class="navbar-logout-form">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-light text-dark fw-600">
                         <i class="fas fa-sign-out-alt me-1"></i> Logout
