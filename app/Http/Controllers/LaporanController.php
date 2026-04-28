@@ -69,21 +69,21 @@ class LaporanController extends Controller
      */
     private function buildTransaksiLaporan(?string $tanggalMulai, ?string $tanggalSelesai): Collection
     {
-        $masukQuery = BarangMasuk::with(['barang:id,nama_barang', 'user:id,name'])
+        $masukQuery = BarangMasuk::with('barang', 'user')
             ->whereNull('deleted_at');
 
-        $keluarQuery = BarangKeluar::with(['barang:id,nama_barang', 'user:id,name'])
+        $keluarQuery = BarangKeluar::with('barang', 'user')
             ->whereNull('deleted_at');
 
         if ($tanggalMulai && $tanggalSelesai) {
-            $masukQuery->whereBetween('tanggal_masuk', [$tanggalMulai, $tanggalSelesai]);
-            $keluarQuery->whereBetween('tanggal_keluar', [$tanggalMulai, $tanggalSelesai]);
+            $masukQuery = $masukQuery->whereBetween('tanggal_masuk', [$tanggalMulai, $tanggalSelesai]);
+            $keluarQuery = $keluarQuery->whereBetween('tanggal_keluar', [$tanggalMulai, $tanggalSelesai]);
         } elseif ($tanggalMulai) {
-            $masukQuery->whereDate('tanggal_masuk', '>=', $tanggalMulai);
-            $keluarQuery->whereDate('tanggal_keluar', '>=', $tanggalMulai);
+            $masukQuery = $masukQuery->whereDate('tanggal_masuk', '>=', $tanggalMulai);
+            $keluarQuery = $keluarQuery->whereDate('tanggal_keluar', '>=', $tanggalMulai);
         } elseif ($tanggalSelesai) {
-            $masukQuery->whereDate('tanggal_masuk', '<=', $tanggalSelesai);
-            $keluarQuery->whereDate('tanggal_keluar', '<=', $tanggalSelesai);
+            $masukQuery = $masukQuery->whereDate('tanggal_masuk', '<=', $tanggalSelesai);
+            $keluarQuery = $keluarQuery->whereDate('tanggal_keluar', '<=', $tanggalSelesai);
         }
 
         $masukRows = $masukQuery->get()->map(function (BarangMasuk $item) {
