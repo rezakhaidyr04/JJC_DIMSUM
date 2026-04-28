@@ -215,7 +215,7 @@ class StokOpnameController extends Controller
                         } else {
                             $barangKeluar->update([
                                 'jumlah' => $jumlahBawa,
-                                'tanggal' => $validated['tanggal'],
+                                'tanggal_keluar' => $validated['tanggal'],
                                 'updated_at' => now(),
                             ]);
                         }
@@ -225,7 +225,7 @@ class StokOpnameController extends Controller
                         'barang_id' => $barang->id,
                         'user_id' => auth()->id(),
                         'jumlah' => $jumlahBawa,
-                        'tanggal' => $validated['tanggal'],
+                        'tanggal_keluar' => $validated['tanggal'],
                         'void_status' => 'none',
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -328,7 +328,7 @@ class StokOpnameController extends Controller
                             } else {
                                 $barangMasuk->update([
                                     'jumlah' => $jumlahSisaBaru,
-                                    'tanggal' => $validated['tanggal'],
+                                    'tanggal_masuk' => $validated['tanggal'],
                                     'updated_at' => now(),
                                 ]);
 
@@ -344,7 +344,7 @@ class StokOpnameController extends Controller
                             'barang_id' => $barang->id,
                             'user_id' => auth()->id(),
                             'jumlah' => $jumlahSisaBaru,
-                            'tanggal' => $validated['tanggal'],
+                            'tanggal_masuk' => $validated['tanggal'],
                             'void_status' => 'none',
                             'created_at' => now(),
                             'updated_at' => now(),
