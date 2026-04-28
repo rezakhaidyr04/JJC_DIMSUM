@@ -6,6 +6,7 @@ use App\Models\Barang;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -41,13 +42,15 @@ class DashboardController extends Controller
         $labels = [];
         $masukData = [];
         $keluarData = [];
+        $tanggalMasukColumn = $this->getTanggalMasukColumn();
+        $tanggalKeluarColumn = $this->getTanggalKeluarColumn();
 
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
             $labels[] = now()->subDays($i)->format('d M');
 
-            $masuk = BarangMasuk::whereDate('tanggal_masuk', $date)->sum('jumlah');
-            $keluar = BarangKeluar::whereDate('tanggal_keluar', $date)->sum('jumlah');
+            $masuk = BarangMasuk::whereDate($tanggalMasukColumn, $date)->sum('jumlah');
+            $keluar = BarangKeluar::whereDate($tanggalKeluarColumn, $date)->sum('jumlah');
 
             $masukData[] = $masuk;
             $keluarData[] = $keluar;
@@ -79,5 +82,15 @@ class DashboardController extends Controller
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();
+    }
+
+    private function getTanggalMasukColumn(): string
+    {
+        return Schema::hasColumn('barang_masuk', 'tanggal_masuk') ? 'tanggal_masuk' : 'tanggal';
+    }
+
+    private function getTanggalKeluarColumn(): string
+    {
+        return Schema::hasColumn('barang_keluar', 'tanggal_keluar') ? 'tanggal_keluar' : 'tanggal';
     }
 }
