@@ -490,8 +490,8 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Redirect to barang page when user clicks "Tindak Lanjuti"
-                    window.location.href = '{{ route("barang.index") }}';
+                    // Redirect to barang masuk page when user clicks "Tindak Lanjuti"
+                    window.location.href = '{{ route("barang-masuk.index") }}';
                 }
             });
         }

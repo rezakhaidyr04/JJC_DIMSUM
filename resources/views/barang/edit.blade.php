@@ -24,13 +24,8 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label for="stok" class="form-label">Stok <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control @error('stok') is-invalid @enderror" 
-                                   id="stok" name="stok" value="{{ old('stok', $barang->stok) }}" min="0" required>
-                            @error('stok')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        <div class="alert alert-secondary">
+                            Stok dikelola otomatis dari transaksi Barang Masuk/Keluar.
                         </div>
 
                         <div class="d-flex flex-wrap gap-2">
