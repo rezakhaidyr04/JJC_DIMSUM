@@ -360,101 +360,49 @@
     <script>
         const ctx = document.getElementById('stockChart').getContext('2d');
         const chart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: @json($chartData['labels']),
                 datasets: [
                     {
                         label: 'Barang Masuk',
                         data: @json($chartData['masukData']),
-                        borderColor: '#ffd400',
-                        backgroundColor: 'rgba(255, 212, 0, 0.12)',
-                        borderWidth: 3.5,
-                        tension: 0.45,
-                        fill: true,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#ffd400',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2.5,
-                        pointHoverRadius: 7,
-                        pointHoverBackgroundColor: '#ffd400',
-                        pointHoverBorderWidth: 3
+                        backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                        borderColor: '#f59e0b',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        borderSkipped: false
                     },
                     {
                         label: 'Barang Keluar',
                         data: @json($chartData['keluarData']),
-                        borderColor: '#c62833',
-                        backgroundColor: 'rgba(198, 40, 51, 0.12)',
-                        borderWidth: 3.5,
-                        tension: 0.45,
-                        fill: true,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#c62833',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2.5,
-                        pointHoverRadius: 7,
-                        pointHoverBackgroundColor: '#c62833',
-                        pointHoverBorderWidth: 3
+                        backgroundColor: 'rgba(220, 38, 38, 0.75)',
+                        borderColor: '#dc2626',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        borderSkipped: false
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'top',
-                        labels: {
-                            boxWidth: 12,
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            padding: 20,
-                            font: {
-                                size: 13,
-                                weight: 600
-                            },
-                            color: '#374151'
-                        }
-                    },
-                    filler: {
-                        propagate: true
+                        position: 'top'
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            precision: 0,
-                            font: {
-                                size: 12,
-                                weight: 500
-                            },
-                            color: '#9ca3af',
-                            padding: 10
-                        },
-                        grid: {
-                            color: 'rgba(229, 231, 235, 0.5)',
-                            drawBorder: false,
-                            lineWidth: 1
+                            precision: 0
                         }
                     },
                     x: {
-                        ticks: {
-                            font: {
-                                size: 12,
-                                weight: 500
-                            },
-                            color: '#9ca3af',
-                            padding: 8
-                        },
                         grid: {
-                            display: false,
-                            drawBorder: false
+                            display: false
                         }
                     }
                 }

@@ -59,6 +59,12 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="jam_realtime_keluar" class="form-label">Jam (Real Time)</label>
+                            <input type="text" class="form-control" id="jam_realtime_keluar" readonly>
+                            <small class="text-muted">Waktu tersimpan mengikuti jam server saat simpan.</small>
+                        </div>
+
                         <div class="d-flex flex-wrap gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Simpan
@@ -72,4 +78,23 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clockInput = document.getElementById('jam_realtime_keluar');
+
+            const updateClock = () => {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                clockInput.value = `${hours}:${minutes}:${seconds}`;
+            };
+
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+    @endpush
 @endsection

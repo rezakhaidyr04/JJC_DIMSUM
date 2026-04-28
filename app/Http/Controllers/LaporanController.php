@@ -143,14 +143,14 @@ class LaporanController extends Controller
             $keluarQuery = $item->barangKeluar();
 
             if ($tanggalMulai && $tanggalSelesai) {
-                $masukQuery->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);
-                $keluarQuery->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);
+                $masukQuery->whereBetween('tanggal_masuk', [$tanggalMulai, $tanggalSelesai]);
+                $keluarQuery->whereBetween('tanggal_keluar', [$tanggalMulai, $tanggalSelesai]);
             } elseif ($tanggalMulai) {
-                $masukQuery->whereDate('tanggal', '>=', $tanggalMulai);
-                $keluarQuery->whereDate('tanggal', '>=', $tanggalMulai);
+                $masukQuery->whereDate('tanggal_masuk', '>=', $tanggalMulai);
+                $keluarQuery->whereDate('tanggal_keluar', '>=', $tanggalMulai);
             } elseif ($tanggalSelesai) {
-                $masukQuery->whereDate('tanggal', '<=', $tanggalSelesai);
-                $keluarQuery->whereDate('tanggal', '<=', $tanggalSelesai);
+                $masukQuery->whereDate('tanggal_masuk', '<=', $tanggalSelesai);
+                $keluarQuery->whereDate('tanggal_keluar', '<=', $tanggalSelesai);
             }
 
             $barangMasuk = $masukQuery->sum('jumlah');
@@ -160,8 +160,8 @@ class LaporanController extends Controller
             $stokAkhir = $item->stok;
 
             if ($tanggalMulai) {
-                $masukSebelum = $item->barangMasuk()->whereDate('tanggal', '<', $tanggalMulai)->sum('jumlah');
-                $keluarSebelum = $item->barangKeluar()->whereDate('tanggal', '<', $tanggalMulai)->sum('jumlah');
+                $masukSebelum = $item->barangMasuk()->whereDate('tanggal_masuk', '<', $tanggalMulai)->sum('jumlah');
+                $keluarSebelum = $item->barangKeluar()->whereDate('tanggal_keluar', '<', $tanggalMulai)->sum('jumlah');
                 $stokAwal = $masukSebelum - $keluarSebelum;
                 $stokAkhir = $stokAwal + $barangMasuk - $barangKeluar;
             }
