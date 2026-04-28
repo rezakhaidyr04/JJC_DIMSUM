@@ -62,6 +62,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/stok-opname-harian', [StokOpnameController::class, 'index'])->name('stok-opname.index');
         Route::post('/stok-opname-harian/pagi', [StokOpnameController::class, 'storeBerangkat'])->name('stok-opname.store-berangkat');
         Route::post('/stok-opname-harian/malam', [StokOpnameController::class, 'storeSisa'])->name('stok-opname.store-sisa');
+        // Page per cabang: shows input pagi + input malam for a selected cabang
+        Route::get('/stok-opname-harian/cabang/{cabang}', [StokOpnameController::class, 'showCabang'])->name('stok-opname.cabang');
     });
 
     // Laporan

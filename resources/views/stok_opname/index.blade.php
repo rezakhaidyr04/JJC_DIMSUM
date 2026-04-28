@@ -30,6 +30,35 @@
                             <a href="{{ route('dashboard') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
                         </div>
                     </form>
+                    
+                    <!-- Daftar cabang: satu section per cabang -->
+                    <div class="mt-3">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="card-title mb-0">Pilih Cabang (klik untuk langsung pilih)</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    @foreach($cabangList as $cabang)
+                                        <div class="col-12 col-md-6">
+                                            <a href="{{ route('stok-opname.cabang', $cabang->id) }}?tanggal={{ $selectedTanggal }}#input-pagi" class="text-decoration-none">
+                                                <div class="border rounded p-3 h-100 d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>{{ $cabang->nama_cabang }}</strong>
+                                                        <div class="text-muted small">{{ $cabang->kode_cabang ?? '' }} • ID: {{ $cabang->id }}</div>
+                                                    </div>
+                                                    <div>
+                                                        <a href="{{ route('stok-opname.cabang', $cabang->id) }}?tanggal={{ $selectedTanggal }}#input-pagi" class="btn btn-sm btn-primary me-1">Pagi</a>
+                                                        <a href="{{ route('stok-opname.cabang', $cabang->id) }}?tanggal={{ $selectedTanggal }}#input-malam" class="btn btn-sm btn-outline-secondary">Malam</a>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -37,7 +66,7 @@
 
     <div class="row mt-3">
         <div class="col-12">
-            <div class="card">
+            <div id="input-pagi" class="card">
                 <div class="card-header">
                     <h3 class="card-title">Input Pagi: Barang Dibawa Ke Cabang</h3>
                 </div>
@@ -115,7 +144,7 @@
 
     <div class="row mt-3">
         <div class="col-12">
-            <div class="card">
+            <div id="input-malam" class="card">
                 <div class="card-header">
                     <h3 class="card-title">Input Malam: Barang Sisa Dari Cabang</h3>
                 </div>
@@ -262,6 +291,22 @@
 
             sisaInput.addEventListener('input', recalc);
             recalc();
+        });
+
+        // Smooth-scroll to section when URL contains a hash (e.g. #input-pagi)
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.location.hash) {
+                try {
+                    var el = document.querySelector(window.location.hash);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        var focusable = el.querySelector('input, select, textarea, button');
+                        if (focusable) focusable.focus();
+                    }
+                } catch (e) {
+                    // ignore invalid selector
+                }
+            }
         });
     </script>
     @endpush

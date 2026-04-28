@@ -22,7 +22,47 @@ class StokOpnameController extends Controller
     public function index(Request $request): View
     {
         $barangList = Barang::orderBy('nama_barang')->get(['id', 'nama_barang']);
-        $cabangList = Cabang::where('aktif', true)->orderBy('nama_cabang')->get();
+        // Urutan prioritas cabang sesuai permintaan user. Nama harus sama persis dengan data DB.
+        $preferredOrder = [
+            'Cab 1 pawarengan',
+            'Cab 2 regency',
+            'Cab 3 Angkringan sukaseri',
+            'Cab 4 Angkringan pawarengan',
+            'Cab 5 Stand HK Kamojing',
+            'Cab 6 Cikopak purwakarta',
+            'Cab 7 Munjul purwakarta',
+            'Cab 8 Telor gulung niceso senopati',
+            'Cab 9 O!save sukaseri',
+            'Cab 10 Maracang purwakarta',
+        ];
+
+        // Ambil semua cabang aktif dari DB terlebih dahulu
+        $allCabangs = Cabang::where('aktif', true)->get();
+
+        // Bangun daftar terurut sesuai preferensi user. Jika nama preferensi tidak ditemukan,
+        // tetap sertakan entri dengan 'model' = null sehingga masih terlihat di UI.
+        $orderedCabangs = collect($preferredOrder)->map(function ($preferredName) use ($allCabangs) {
+            $found = $allCabangs->first(function ($c) use ($preferredName) {
+                return strcasecmp(trim($c->nama_cabang), trim($preferredName)) === 0;
+            });
+
+            return [
+                'preferred_name' => $preferredName,
+                'model' => $found, // bisa null
+            ];
+        });
+
+        // Tambahan: sertakan juga cabang lain yang ada di DB (di akhir)
+        $otherCabangs = $allCabangs->reject(function ($c) use ($preferredOrder) {
+            foreach ($preferredOrder as $p) {
+                if (strcasecmp(trim($c->nama_cabang), trim($p)) === 0) {
+                    return true;
+                }
+            }
+            return false;
+        })->values();
+
+        $cabangList = $orderedCabangs->pluck('model')->filter()->values()->concat($otherCabangs);
 
         $selectedTanggal = old('tanggal', $request->query('tanggal', now()->toDateString()));
         $selectedCabang = old('cabang_id', $request->query('cabang_id'));
@@ -54,6 +94,64 @@ class StokOpnameController extends Controller
             'selectedTanggal' => $selectedTanggal,
             'selectedCabang' => $selectedCabang,
             'existingItemsByBarang' => $existingItemsByBarang,
+        ]);
+    }
+
+    /**
+     * Show the pagi+malam input page for a specific cabang (karyawan view).
+     */
+    public function showCabang(Request $request, Cabang $cabang): View
+    {
+        $barangList = Barang::orderBy('nama_barang')->get(['id', 'nama_barang']);
+
+        $selectedTanggal = $request->query('tanggal', now()->toDateString());
+        $selectedCabang = $cabang->id;
+
+        $selectedHeader = CabangDistribusi::with('items')
+            ->whereDate('tanggal', $selectedTanggal)
+            ->where('cabang_id', $selectedCabang)
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->first();
+
+        $existingItemsByBarang = $selectedHeader
+            ? $selectedHeader->items->keyBy('barang_id')
+            : collect();
+
+        $todayRecords = CabangDistribusi::with(['cabang', 'items.barang'])
+            ->whereDate('tanggal', now()->toDateString())
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        $recentActivities = CabangDistribusi::with(['user', 'items.barang'])
+            ->where('cabang_id', $cabang->id)
+            ->latest()
+            ->take(8)
+            ->get()
+            ->map(function (CabangDistribusi $record) {
+                $items = $record->items;
+
+                return [
+                    'tanggal' => $record->tanggal,
+                    'created_at' => $record->created_at,
+                    'user_name' => $record->user?->name ?? '-',
+                    'total_bawa' => $items->sum('jumlah_bawa'),
+                    'total_sisa' => $items->sum('jumlah_sisa'),
+                    'total_terpakai' => $items->sum('jumlah_terpakai'),
+                    'barang_keluar_count' => $items->whereNotNull('barang_keluar_id')->count(),
+                    'barang_masuk_count' => $items->whereNotNull('barang_masuk_id')->count(),
+                ];
+            });
+
+        return view('stok_opname.cabang', [
+            'barangList' => $barangList,
+            'cabang' => $cabang,
+            'selectedTanggal' => $selectedTanggal,
+            'selectedCabang' => $selectedCabang,
+            'existingItemsByBarang' => $existingItemsByBarang,
+            'todayRecords' => $todayRecords,
+            'recentActivities' => $recentActivities,
         ]);
     }
 
@@ -296,7 +394,43 @@ class StokOpnameController extends Controller
         $records = $query->get();
         $summaryByCabang = $this->buildSummaryByCabang($records);
         $konsumsiBarang = $this->buildKonsumsiBarang($records);
-        $cabangList = Cabang::where('aktif', true)->orderBy('nama_cabang')->get();
+        // Build ordered cabang list for the rekap view (preserve preferred order)
+        $preferredOrder = [
+            'Cab 1 pawarengan',
+            'Cab 2 regency',
+            'Cab 3 Angkringan sukaseri',
+            'Cab 4 Angkringan pawarengan',
+            'Cab 5 Stand HK Kamojing',
+            'Cab 6 Cikopak purwakarta',
+            'Cab 7 Munjul purwakarta',
+            'Cab 8 Telor gulung niceso senopati',
+            'Cab 9 O!save sukaseri',
+            'Cab 10 Maracang purwakarta',
+        ];
+
+        $allCabangs = Cabang::where('aktif', true)->get();
+
+        $orderedCabangs = collect($preferredOrder)->map(function ($preferredName) use ($allCabangs) {
+            $found = $allCabangs->first(function ($c) use ($preferredName) {
+                return strcasecmp(trim($c->nama_cabang), trim($preferredName)) === 0;
+            });
+
+            return [
+                'preferred_name' => $preferredName,
+                'model' => $found,
+            ];
+        });
+
+        $otherCabangs = $allCabangs->reject(function ($c) use ($preferredOrder) {
+            foreach ($preferredOrder as $p) {
+                if (strcasecmp(trim($c->nama_cabang), trim($p)) === 0) {
+                    return true;
+                }
+            }
+            return false;
+        })->values();
+
+        $cabangList = $orderedCabangs->pluck('model')->filter()->values()->concat($otherCabangs);
 
         return view('stok_opname.rekap', [
             'records' => $records,
