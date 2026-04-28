@@ -47,16 +47,21 @@
             display: flex;
             width: 100%;
             min-height: 100dvh;
+            background: url('{{ asset('images/login-bg.jpeg') }}') center center / cover no-repeat;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .login-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(24, 12, 12, 0.26), rgba(24, 12, 12, 0.12));
+            z-index: -1;
         }
 
         .login-left {
-            flex: 1;
-            background: linear-gradient(135deg, #c62833 0%, #8f1b24 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
+            display: none;
         }
 
         .login-left::after {
@@ -81,7 +86,7 @@
 
         .login-right {
             flex: 1;
-            background: linear-gradient(135deg, #ffd400 0%, #ffe680 100%);
+            background: transparent;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -94,11 +99,20 @@
         .auth-container {
             width: 100%;
             max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
         .auth-logo-section {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 0;
+            padding: 14px 16px 4px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.20);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.12);
         }
 
         .page-header-logo {
@@ -125,30 +139,33 @@
 
         .auth-subtitle {
             margin: 0 0 8px;
-            color: var(--text-main);
+            color: #ffffff;
             font-size: 16px;
             font-weight: 700;
             letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
         }
 
         .auth-description {
             margin: 0;
-            color: var(--text-soft);
+            color: rgba(255, 255, 255, 0.92);
             font-size: 13px;
             font-weight: 500;
             line-height: 1.5;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 8px 24px rgba(24, 12, 12, 0.15);
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
+            backdrop-filter: blur(16px);
             overflow: hidden;
         }
 
         .auth-head {
-            background: linear-gradient(135deg, var(--brand-red) 0%, var(--brand-red-dark) 100%);
+            background: rgba(198, 40, 51, 0.82);
             color: #ffffff;
             text-align: center;
             padding: 24px;
@@ -173,7 +190,7 @@
 
         .auth-body {
             padding: 28px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .form-group {
@@ -181,25 +198,27 @@
         }
 
         .form-label {
-            color: var(--text-main);
+            color: #ffffff;
             font-size: 0.92rem;
             font-weight: 700;
             margin-bottom: 6px;
             display: block;
             letter-spacing: 0.3px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
         }
 
         .form-control {
             border-radius: 8px;
-            border: 1.5px solid var(--field-border);
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
             padding: 11px 13px;
             min-height: 44px;
             font-size: 0.92rem;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.88);
             color: var(--text-main);
             width: 100%;
             font-family: 'Poppins', sans-serif;
             transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
         }
 
         .form-control:focus {
@@ -250,11 +269,12 @@
         }
 
         .form-check-label {
-            color: var(--text-main);
+            color: #ffffff;
             font-weight: 500;
             font-size: 0.9rem;
             cursor: pointer;
             margin: 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
         }
 
         .btn-brand {
@@ -312,10 +332,11 @@
         .auth-foot {
             margin-top: 14px;
             padding-top: 14px;
-            border-top: 1px solid #e8e8e8;
+            border-top: 1px solid rgba(255, 255, 255, 0.28);
             text-align: center;
-            color: var(--text-soft);
+            color: rgba(255, 255, 255, 0.92);
             font-size: 0.88rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
         }
 
         .auth-foot a {
@@ -402,7 +423,7 @@
                 <div class="auth-logo-section">
                     <img src="{{ asset('images/logo-login.png') }}" alt="Logo Jajanan Cikampek" class="page-header-logo">
                     <p class="auth-subtitle">SELAMAT DATANG KEMBALI!</p>
-                    <p class="auth-description">Masuk untuk menikmati jajanan terbaik dari Cikampek.</p>
+                    <p class="auth-description">Silahkan log in untuk masuk ke sistem manajemen stok Jajanan Cikampek.</p>
                 </div>
 
                 <!-- Auth Card -->
