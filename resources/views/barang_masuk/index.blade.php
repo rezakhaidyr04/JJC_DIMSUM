@@ -209,13 +209,17 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Data Barang Masuk</h3>
-                    @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
-                        <div class="card-tools">
+                    <div class="card-tools">
+                        @if(Auth::user()->isKaryawan())
                             <a href="{{ route('barang-masuk.create') }}" class="btn btn-success btn-sm">
                                 <i class="fas fa-plus"></i> Tambah
                             </a>
-                        </div>
-                    @endif
+                        @elseif(Auth::user()->isOwner())
+                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#karyawanOnlyModal">
+                                <i class="fas fa-plus"></i> Tambah
+                            </button>
+                        @endif
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="barang-masuk-insights">
@@ -341,6 +345,23 @@
                     <div class="d-flex justify-content-center">
                         {{ $barangMasuk->links() }}
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="karyawanOnlyModal" tabindex="-1" aria-labelledby="karyawanOnlyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="karyawanOnlyModalLabel">Akses Ditolak</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Akses ini hanya untuk karyawan.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>

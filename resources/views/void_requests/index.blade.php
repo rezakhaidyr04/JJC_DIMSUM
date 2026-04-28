@@ -115,4 +115,102 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Riwayat Void Disetujui - Barang Masuk</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No</th>
+                                    <th>Barang</th>
+                                    <th class="text-center">Jumlah</th>
+                                    <th>Penginput</th>
+                                    <th>Peminta Void</th>
+                                    <th>Approver</th>
+                                    <th>Alasan Void</th>
+                                    <th class="text-center">Waktu Approve</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($approvedMasuk as $item)
+                                    <tr>
+                                        <td class="text-center">{{ ($approvedMasuk->currentPage() - 1) * $approvedMasuk->perPage() + $loop->iteration }}</td>
+                                        <td>{{ $item->barang?->nama_barang ?? '-' }}</td>
+                                        <td class="text-center">{{ $item->jumlah }}</td>
+                                        <td>{{ $item->user?->name ?? '-' }}</td>
+                                        <td>{{ $item->voidRequester?->name ?? '-' }}</td>
+                                        <td>{{ $item->voidApprover?->name ?? '-' }}</td>
+                                        <td>{{ $item->void_reason ?? '-' }}</td>
+                                        <td class="text-center">{{ optional($item->void_approved_at)->format('d M Y H:i') ?? '-' }} WIB</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">Belum ada riwayat void disetujui untuk barang masuk.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $approvedMasuk->links() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Riwayat Void Disetujui - Barang Keluar</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No</th>
+                                    <th>Barang</th>
+                                    <th class="text-center">Jumlah</th>
+                                    <th>Penginput</th>
+                                    <th>Peminta Void</th>
+                                    <th>Approver</th>
+                                    <th>Alasan Void</th>
+                                    <th class="text-center">Waktu Approve</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($approvedKeluar as $item)
+                                    <tr>
+                                        <td class="text-center">{{ ($approvedKeluar->currentPage() - 1) * $approvedKeluar->perPage() + $loop->iteration }}</td>
+                                        <td>{{ $item->barang?->nama_barang ?? '-' }}</td>
+                                        <td class="text-center">{{ $item->jumlah }}</td>
+                                        <td>{{ $item->user?->name ?? '-' }}</td>
+                                        <td>{{ $item->voidRequester?->name ?? '-' }}</td>
+                                        <td>{{ $item->voidApprover?->name ?? '-' }}</td>
+                                        <td>{{ $item->void_reason ?? '-' }}</td>
+                                        <td class="text-center">{{ optional($item->void_approved_at)->format('d M Y H:i') ?? '-' }} WIB</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">Belum ada riwayat void disetujui untuk barang keluar.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $approvedKeluar->links() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

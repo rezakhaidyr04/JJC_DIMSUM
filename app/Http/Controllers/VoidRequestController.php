@@ -23,9 +23,23 @@ class VoidRequestController extends Controller
             ->latest('void_requested_at')
             ->paginate(10, ['*'], 'keluar_page');
 
+        $approvedMasuk = BarangMasuk::withTrashed()
+            ->with(['barang', 'user', 'voidRequester', 'voidApprover'])
+            ->where('void_status', 'approved')
+            ->latest('void_approved_at')
+            ->paginate(10, ['*'], 'approved_masuk_page');
+
+        $approvedKeluar = BarangKeluar::withTrashed()
+            ->with(['barang', 'user', 'voidRequester', 'voidApprover'])
+            ->where('void_status', 'approved')
+            ->latest('void_approved_at')
+            ->paginate(10, ['*'], 'approved_keluar_page');
+
         return view('void_requests.index', [
             'pendingMasuk' => $pendingMasuk,
             'pendingKeluar' => $pendingKeluar,
+            'approvedMasuk' => $approvedMasuk,
+            'approvedKeluar' => $approvedKeluar,
         ]);
     }
 }
