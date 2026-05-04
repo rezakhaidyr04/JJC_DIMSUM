@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('barang_masuk', function (Blueprint $table) {
-            $table->enum('sumber', ['manual', 'system', 'import'])->default('manual')->after('tanggal_masuk');
+            $table->string('sumber', 30)->default('manual')->after('tanggal_masuk');
         });
     }
 
