@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Barang;
-use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
+use App\Models\BarangMasuk;
 use Illuminate\Support\Collection;
 
 class FifoService
@@ -12,10 +12,10 @@ class FifoService
     /**
      * Get FIFO candidates for a specific barang from a location
      * Returns barang masuk records ordered by tanggal_masuk (oldest first)
-     * 
-     * @param int $barangId - ID of the barang to withdraw
-     * @param int $lokasiId - ID of the storage location
-     * @param int $quantity - Quantity to withdraw
+     *
+     * @param  int  $barangId  - ID of the barang to withdraw
+     * @param  int  $lokasiId  - ID of the storage location
+     * @param  int  $quantity  - Quantity to withdraw
      * @return Collection - Collection of BarangMasuk records to use for FIFO
      */
     public function getFifoCandidates(int $barangId, int $lokasiId, int $quantity): Collection
@@ -39,14 +39,11 @@ class FifoService
     /**
      * Calculate remaining stock for a barang_masuk record
      * = tanggal_masuk.jumlah - sum(barang_keluar where barang_masuk_id)
-     * 
-     * @param int $barangMasukId
-     * @return int
      */
     public function getRemainingStock(int $barangMasukId): int
     {
         $masuk = BarangMasuk::find($barangMasukId);
-        if (!$masuk) {
+        if (! $masuk) {
             return 0;
         }
 
@@ -60,10 +57,6 @@ class FifoService
     /**
      * Get stock details for barang at a location
      * Shows breakdown by tanggal_masuk
-     * 
-     * @param int $barangId
-     * @param int $lokasiId
-     * @return Collection
      */
     public function getStockDetails(int $barangId, int $lokasiId): Collection
     {
@@ -88,8 +81,8 @@ class FifoService
     /**
      * Create barang_keluar records following FIFO method
      * Automatically matches with oldest barang_masuk records
-     * 
-     * @param array $data - Data barang_keluar
+     *
+     * @param  array  $data  - Data barang_keluar
      * @return array - Array of created BarangKeluar records
      */
     public function createFifoWithdrawal(array $data): array

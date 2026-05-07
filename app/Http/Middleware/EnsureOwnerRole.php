@@ -13,7 +13,7 @@ class EnsureOwnerRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->isOwner()) {
+        if (! $request->user() || ! $request->user()->isOwner()) {
             abort(403, 'Akses ini hanya untuk owner.');
         }
 

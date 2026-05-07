@@ -15,7 +15,7 @@ return new class extends Migration
             // Add cabang and lokasi references
             $table->unsignedBigInteger('cabang_id')->nullable()->after('stok');
             $table->unsignedBigInteger('lokasi_default_id')->nullable()->after('cabang_id');
-            
+
             // Add foreign keys
             $table->foreign('cabang_id')->references('id')->on('cabangs')->onDelete('set null');
             $table->foreign('lokasi_default_id')->references('id')->on('lokasi_penyimpanans')->onDelete('set null');

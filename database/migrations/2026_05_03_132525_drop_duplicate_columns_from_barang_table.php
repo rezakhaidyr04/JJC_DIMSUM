@@ -22,7 +22,7 @@ return new class extends Migration
             if (Schema::hasColumn('barang', 'stok_minimal')) {
                 $table->dropColumn('stok_minimal');
             }
-            
+
             // Drop cabang_id and lokasi_default_id columns
             if (Schema::hasColumn('barang', 'cabang_id')) {
                 $table->dropColumn('cabang_id');
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->integer('stok_minimal')->nullable()->after('stok');
             $table->unsignedBigInteger('cabang_id')->nullable()->after('stok_minimal');
             $table->unsignedBigInteger('lokasi_default_id')->nullable()->after('cabang_id');
-            
+
             // Re-add foreign keys
             $table->foreign('cabang_id')->references('id')->on('cabangs')->onDelete('set null');
             $table->foreign('lokasi_default_id')->references('id')->on('lokasi_penyimpanans')->onDelete('set null');

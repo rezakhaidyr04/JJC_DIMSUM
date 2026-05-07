@@ -20,7 +20,7 @@ class DemoAuditSeeder extends Seeder
         $karyawan = User::where('role', 'karyawan')->first();
         $barang = Barang::orderBy('id')->take(3)->get();
 
-        if (!$owner || !$karyawan || $barang->isEmpty()) {
+        if (! $owner || ! $karyawan || $barang->isEmpty()) {
             return;
         }
 

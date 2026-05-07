@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Barang extends Model
 {
     protected $table = 'barang';
-    protected $fillable = ['nama_barang', 'stok'];
+    protected $fillable = ['kode_barang', 'nama_barang', 'satuan', 'stok_min', 'status', 'stok'];
 
     // Relationships
     public function barangMasuk(): HasMany
@@ -60,8 +60,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BarangMasuk extends Model
 {
     protected $table = 'barang_masuk';
-    protected $fillable = ['barang_id', 'jumlah', 'tanggal'];
-    protected $casts = ['tanggal' => 'date'];
+    protected $fillable = ['barang_id', 'jumlah', 'tanggal_masuk'];
+    protected $casts = ['tanggal_masuk' => 'date'];
 
     public function barang(): BelongsTo
     {
@@ -111,8 +111,8 @@ class DashboardController extends Controller
             $date = now()->subDays($i)->format('Y-m-d');
             $labels[] = now()->subDays($i)->format('d M');
 
-            $masuk = BarangMasuk::whereDate('tanggal', $date)->sum('jumlah');
-            $keluar = BarangKeluar::whereDate('tanggal', $date)->sum('jumlah');
+            $masuk = BarangMasuk::whereDate('tanggal_masuk', $date)->sum('jumlah');
+            $keluar = BarangKeluar::whereDate('tanggal_keluar', $date)->sum('jumlah');
 
             $masukData[] = $masuk;
             $keluarData[] = $keluar;
@@ -148,10 +148,16 @@ class BarangController extends Controller
     {
         $validated = $request->validate([
             'nama_barang' => 'required|string|unique:barang|max:255',
-            'stok' => 'required|integer|min:0',
+            'satuan' => 'nullable|string|max:50',
+            'stok_min' => 'nullable|integer|min:0',
         ]);
 
-        Barang::create($validated);
+        Barang::create([
+            'nama_barang' => $validated['nama_barang'],
+            'satuan' => $validated['satuan'] ?? null,
+            'stok_min' => $validated['stok_min'] ?? 5,
+            'stok' => 0,
+        ]);
         return redirect()->route('barang.index')
                        ->with('success', 'Barang berhasil ditambahkan.');
     }
@@ -165,10 +171,15 @@ class BarangController extends Controller
     {
         $validated = $request->validate([
             'nama_barang' => "required|string|unique:barang,nama_barang,{$barang->id}|max:255",
-            'stok' => 'required|integer|min:0',
+            'satuan' => 'nullable|string|max:50',
+            'stok_min' => 'nullable|integer|min:0',
         ]);
 
-        $barang->update($validated);
+        $barang->update([
+            'nama_barang' => $validated['nama_barang'],
+            'satuan' => $validated['satuan'] ?? $barang->satuan,
+            'stok_min' => $validated['stok_min'] ?? $barang->stok_min,
+        ]);
         return redirect()->route('barang.index')
                        ->with('success', 'Barang berhasil diperbarui.');
     }
@@ -198,7 +209,7 @@ class BarangMasukController extends Controller
         $validated = $request->validate([
             'barang_id' => 'required|exists:barang,id',
             'jumlah' => 'required|integer|min:1',
-            'tanggal' => 'required|date',
+            'tanggal_masuk' => 'required|date',
         ]);
 
         // Create record
@@ -217,7 +228,7 @@ class BarangMasukController extends Controller
         $validated = $request->validate([
             'barang_id' => 'required|exists:barang,id',
             'jumlah' => 'required|integer|min:1',
-            'tanggal' => 'required|date',
+            'tanggal_masuk' => 'required|date',
         ]);
 
         // Calculate difference
@@ -449,7 +460,8 @@ require __DIR__.'/auth.php';
 ```php
 $request->validate([
     'nama_barang' => 'required|string|unique:barang|max:255',
-    'stok' => 'required|integer|min:0',
+    'satuan' => 'nullable|string|max:50',
+    'stok_min' => 'nullable|integer|min:0',
 ]);
 ```
 
@@ -458,7 +470,7 @@ $request->validate([
 $request->validate([
     'barang_id' => 'required|integer|exists:barang,id',
     'jumlah' => 'required|integer|min:1',
-    'tanggal' => 'required|date',
+    'tanggal_masuk' => 'required|date',
 ]);
 ```
 
@@ -502,10 +514,10 @@ $item = Barang::with('barangMasuk')->find($id);
 ### Filter by Date
 ```php
 // Get records for specific date
-$hari_ini = BarangMasuk::whereDate('tanggal', today())->get();
+$hari_ini = BarangMasuk::whereDate('tanggal_masuk', today())->get();
 
 // Get records for date range
-$range = BarangMasuk::whereBetween('tanggal', [
+$range = BarangMasuk::whereBetween('tanggal_masuk', [
     $startDate, 
     $endDate
 ])->get();

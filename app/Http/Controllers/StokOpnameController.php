@@ -59,6 +59,7 @@ class StokOpnameController extends Controller
                     return true;
                 }
             }
+
             return false;
         })->values();
 
@@ -184,7 +185,7 @@ class StokOpnameController extends Controller
         DB::transaction(function () use ($validated, $rows) {
             $header = $this->findOrCreateHeader($validated['tanggal'], (int) $validated['cabang_id']);
 
-            if (!empty($validated['catatan'])) {
+            if (! empty($validated['catatan'])) {
                 $header->update(['catatan' => $validated['catatan']]);
             }
 
@@ -240,7 +241,7 @@ class StokOpnameController extends Controller
                 $jumlahSisa = (int) ($item->jumlah_sisa ?? 0);
                 $jumlahTerpakai = $jumlahBawa - $jumlahSisa;
 
-                if (!$item) {
+                if (! $item) {
                     $header->items()->create([
                         'barang_id' => $barang->id,
                         'jumlah_bawa' => $jumlahBawa,
@@ -287,7 +288,7 @@ class StokOpnameController extends Controller
             ->latest()
             ->first();
 
-        if (!$header) {
+        if (! $header) {
             return redirect()->back()->withInput()->withErrors([
                 'sisa' => 'Input malam tidak bisa disimpan. Silakan input data keberangkatan pagi terlebih dahulu.',
             ]);
@@ -295,13 +296,13 @@ class StokOpnameController extends Controller
 
         $itemMap = $header->items->keyBy('barang_id');
 
-        DB::transaction(function () use ($validated, $itemMap, $header) {
+        DB::transaction(function () use ($validated, $itemMap) {
             foreach ($validated['sisa'] as $row) {
                 $barang = Barang::findOrFail($row['barang_id']);
                 $jumlahSisaBaru = (int) $row['jumlah_sisa'];
                 $item = $itemMap->get($barang->id);
 
-                if (!$item) {
+                if (! $item) {
                     if ($jumlahSisaBaru > 0) {
                         abort(422, 'Jumlah sisa hanya bisa diisi untuk barang yang dibawa di pagi hari.');
                     }
@@ -428,6 +429,7 @@ class StokOpnameController extends Controller
                     return true;
                 }
             }
+
             return false;
         })->values();
 
@@ -479,7 +481,7 @@ class StokOpnameController extends Controller
             'logoBase64' => $this->getLogoBase64(),
         ])->setPaper('a4', 'landscape')->setOption('defaultFont', 'Arial');
 
-        return $pdf->download('rekap-operasional-cabang-bulanan-' . str_replace('-', '', $bulan) . '.pdf');
+        return $pdf->download('rekap-operasional-cabang-bulanan-'.str_replace('-', '', $bulan).'.pdf');
     }
 
     private function buildSummaryByCabang(Collection $records): Collection
@@ -522,7 +524,7 @@ class StokOpnameController extends Controller
     {
         $logoPath = public_path('images/logo-login.png');
 
-        if (!file_exists($logoPath)) {
+        if (! file_exists($logoPath)) {
             return null;
         }
 
@@ -532,7 +534,7 @@ class StokOpnameController extends Controller
             return null;
         }
 
-        return 'data:image/png;base64,' . base64_encode($logoContents);
+        return 'data:image/png;base64,'.base64_encode($logoContents);
     }
 
     private function findOrCreateHeader(string $tanggal, int $cabangId): CabangDistribusi

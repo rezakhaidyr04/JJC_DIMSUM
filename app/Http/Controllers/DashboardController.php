@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
-use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
+use App\Models\BarangMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -22,7 +22,7 @@ class DashboardController extends Controller
         // Get data for chart (last 7 days)
         $chartData = $this->getChartData();
         $recentActivities = $this->getRecentActivities();
-        
+
         // Get low stock notifications
         $lowStockItems = Barang::getLowStockNotifications();
 

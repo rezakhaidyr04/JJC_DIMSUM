@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class BarangController extends Controller
 {
@@ -15,6 +15,7 @@ class BarangController extends Controller
     public function index(): View
     {
         $barang = Barang::latest()->paginate(10);
+
         return view('barang.index', compact('barang'));
     }
 
@@ -108,7 +109,7 @@ class BarangController extends Controller
     public function update(Request $request, Barang $barang): RedirectResponse
     {
         $validated = $request->validate([
-            'nama_barang' => 'required|string|unique:barang,nama_barang,' . $barang->id . '|max:255',
+            'nama_barang' => 'required|string|unique:barang,nama_barang,'.$barang->id.'|max:255',
             'satuan' => 'nullable|string|max:50',
             'stok_min' => 'nullable|integer|min:0',
         ]);

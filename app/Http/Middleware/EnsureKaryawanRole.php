@@ -13,7 +13,7 @@ class EnsureKaryawanRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->isKaryawan()) {
+        if (! $request->user() || ! $request->user()->isKaryawan()) {
             abort(403, 'Akses ini hanya untuk karyawan.');
         }
 

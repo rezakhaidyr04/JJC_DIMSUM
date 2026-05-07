@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('barang_masuk', function (Blueprint $table) {
-            if (!Schema::hasColumn('barang_masuk', 'user_id')) {
+            if (! Schema::hasColumn('barang_masuk', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->nullable()->after('sumber');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             }
-            
-            if (!Schema::hasColumn('barang_masuk', 'void_status')) {
+
+            if (! Schema::hasColumn('barang_masuk', 'void_status')) {
                 $table->enum('void_status', ['none', 'voided', 'pending'])->default('none')->after('user_id');
             }
         });

@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -40,10 +38,10 @@ return new class extends Migration
         // This migration is destructive and cannot be safely reversed
         // It is meant to be a manual reset operation
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        
+
         // Optionally, you can at least log what was reset
         // but restoring the original data would require backups
-        
+
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 };

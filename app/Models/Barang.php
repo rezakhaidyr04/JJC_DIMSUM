@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Barang extends Model
 {
@@ -31,7 +30,7 @@ class Barang extends Model
             }
 
             // determine satuan if not provided
-            if (empty($barang->satuan) && !empty($barang->nama_barang)) {
+            if (empty($barang->satuan) && ! empty($barang->nama_barang)) {
                 $nama = strtolower($barang->nama_barang);
                 if (str_contains($nama, 'tusuk') || str_contains($nama, 'sedotan') || str_contains($nama, 'cup') || str_contains($nama, 'sumpit')) {
                     $barang->satuan = 'pack';
@@ -42,14 +41,14 @@ class Barang extends Model
             }
 
             // generate kode_barang: 2 letters + digits
-            if (empty($barang->kode_barang) && !empty($barang->nama_barang)) {
+            if (empty($barang->kode_barang) && ! empty($barang->nama_barang)) {
                 $letters = preg_replace('/[^a-zA-Z]/', '', $barang->nama_barang);
                 $prefix = strtoupper(substr($letters, 0, 2));
                 if (strlen($prefix) < 2) {
                     $prefix = str_pad($prefix, 2, 'X');
                 }
                 // append timestamp-based numbers to reduce collisions
-                $barang->kode_barang = $prefix . rand(100, 999);
+                $barang->kode_barang = $prefix.rand(100, 999);
             }
 
             // determine status based on stok vs stok_min
@@ -155,7 +154,7 @@ class Barang extends Model
                 'nama_barang' => $barang->nama_barang,
                 'stok' => $barang->stok,
                 'status' => $barang->stok == 0 ? 'habis' : 'hampir_habis',
-                'pesan' => $barang->stok == 0 ? 'Stok habis' : 'Stok hampir habis'
+                'pesan' => $barang->stok == 0 ? 'Stok habis' : 'Stok hampir habis',
             ];
         })->toArray();
     }

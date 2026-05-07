@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
-use App\Models\BarangKeluar;
 use App\Models\BarangMasuk;
 use App\Models\Cabang;
 use App\Models\CabangDistribusi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
@@ -40,8 +39,8 @@ class LaporanController extends Controller
         }
 
         if ($export === 'pdf') {
-            $filename = 'laporan-stok-' . now()->format('Ymd_His') . '.pdf';
-            
+            $filename = 'laporan-stok-'.now()->format('Ymd_His').'.pdf';
+
             $pdf = Pdf::loadView('laporan.pdf', [
                 'laporan' => $laporan,
                 'tanggalMulai' => $tanggalMulai,
@@ -65,7 +64,7 @@ class LaporanController extends Controller
     {
         $logoPath = public_path('images/logo-login.png');
 
-        if (!file_exists($logoPath)) {
+        if (! file_exists($logoPath)) {
             return null;
         }
 
@@ -75,7 +74,7 @@ class LaporanController extends Controller
             return null;
         }
 
-        return 'data:image/png;base64,' . base64_encode($logoContents);
+        return 'data:image/png;base64,'.base64_encode($logoContents);
     }
 
     /**
@@ -138,22 +137,22 @@ class LaporanController extends Controller
                 $kodeCabang = $record->cabang?->kode_cabang ?: ($record->cabang?->nama_cabang ?? '-');
 
                 return trim(
-                    $kodeCabang .
-                    ': keluar ' . $totalBawa .
-                    ', kembali ' . $totalSisa .
-                    ', terpakai ' . $totalTerpakai
+                    $kodeCabang.
+                    ': keluar '.$totalBawa.
+                    ', kembali '.$totalSisa.
+                    ', terpakai '.$totalTerpakai
                 );
             })->filter()->implode("\n");
 
             $detailBarang = $barangIds->map(function ($barangId) use ($dailyRecords, $barangMasukData, $cabangHeaders, $tanggal) {
                 $barang = Barang::find($barangId);
-                if (!$barang) {
+                if (! $barang) {
                     return null;
                 }
 
                 $perCabang = $dailyRecords->map(function (CabangDistribusi $record) use ($barangId) {
                     $item = $record->items->firstWhere('barang_id', $barangId);
-                    if (!$item) {
+                    if (! $item) {
                         return null;
                     }
 
@@ -306,7 +305,7 @@ class LaporanController extends Controller
      */
     private function exportExcel(Collection $laporan, ?string $tanggalMulai, ?string $tanggalSelesai): StreamedResponse
     {
-        $filename = 'laporan-stok-' . now()->format('Ymd_His') . '.csv';
+        $filename = 'laporan-stok-'.now()->format('Ymd_His').'.csv';
 
         return response()->streamDownload(function () use ($laporan, $tanggalMulai, $tanggalSelesai) {
             $handle = fopen('php://output', 'w');
@@ -315,7 +314,7 @@ class LaporanController extends Controller
             fwrite($handle, "\xEF\xBB\xBF");
 
             fputcsv($handle, ['Laporan Stok Cikampek Jajanan']);
-            fputcsv($handle, ['Periode', ($tanggalMulai ?: '-') . ' s/d ' . ($tanggalSelesai ?: '-')]);
+            fputcsv($handle, ['Periode', ($tanggalMulai ?: '-').' s/d '.($tanggalSelesai ?: '-')]);
             fputcsv($handle, []);
             fputcsv($handle, ['No', 'Tanggal', 'Total Cabang', 'Keluar/Bawa', 'Kembali/Sisa', 'Terpakai', 'Barang Masuk', 'Saldo Harian', 'Stok Real Saat Ini', 'Detail Cabang']);
 
@@ -334,10 +333,10 @@ class LaporanController extends Controller
                 ]);
 
                 // Add detail barang rows
-                if (!empty($item['detail_barang'])) {
+                if (! empty($item['detail_barang'])) {
                     foreach ($item['detail_barang'] as $barang) {
                         fputcsv($handle, [
-                            '  ' . $barang['kode_barang'] . ' - ' . $barang['nama_barang'],
+                            '  '.$barang['kode_barang'].' - '.$barang['nama_barang'],
                             '',
                             '',
                             '',
@@ -348,11 +347,11 @@ class LaporanController extends Controller
                             '',
                         ]);
 
-                        if (!empty($barang['per_cabang'])) {
+                        if (! empty($barang['per_cabang'])) {
                             foreach ($barang['per_cabang'] as $cabang) {
                                 fputcsv($handle, [
                                     '',
-                                    '    ' . $cabang['kode_cabang'],
+                                    '    '.$cabang['kode_cabang'],
                                     '',
                                     $cabang['jumlah_bawa'],
                                     $cabang['jumlah_sisa'],

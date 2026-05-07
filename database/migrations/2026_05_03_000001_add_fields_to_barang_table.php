@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('barang', 'kode_barang') || !Schema::hasColumn('barang', 'satuan') || !Schema::hasColumn('barang', 'stok_min') || !Schema::hasColumn('barang', 'status')) {
+        if (! Schema::hasColumn('barang', 'kode_barang') || ! Schema::hasColumn('barang', 'satuan') || ! Schema::hasColumn('barang', 'stok_min') || ! Schema::hasColumn('barang', 'status')) {
             Schema::table('barang', function (Blueprint $table) {
-                if (!Schema::hasColumn('barang', 'kode_barang')) {
+                if (! Schema::hasColumn('barang', 'kode_barang')) {
                     $table->string('kode_barang')->nullable()->unique()->after('id');
                 }
-                if (!Schema::hasColumn('barang', 'satuan')) {
+                if (! Schema::hasColumn('barang', 'satuan')) {
                     $table->string('satuan')->nullable()->after('nama_barang');
                 }
-                if (!Schema::hasColumn('barang', 'stok_min')) {
+                if (! Schema::hasColumn('barang', 'stok_min')) {
                     $table->integer('stok_min')->default(5)->after('satuan');
                 }
-                if (!Schema::hasColumn('barang', 'status')) {
+                if (! Schema::hasColumn('barang', 'status')) {
                     $table->string('status')->nullable()->after('stok_min');
                 }
             });
@@ -47,7 +47,7 @@ return new class extends Migration
             if (strlen($prefix) < 2) {
                 $prefix = str_pad($prefix, 2, 'X');
             }
-            $kode = $prefix . $row->id;
+            $kode = $prefix.$row->id;
 
             // determine status based on stok and stok_min (default 5)
             $stok = (int) ($row->stok ?? 0);

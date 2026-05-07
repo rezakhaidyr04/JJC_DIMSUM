@@ -4,7 +4,7 @@
 
 | Aspek | Detail |
 |-------|--------|
-| **Sistem** | Stock Management System (Laravel 11+) |
+| **Sistem** | Stock Management System (Laravel 10+) |
 | **Pages** | 6 fully redesigned pages |
 | **Status** | ✅ Production Ready |
 | **Bugs** | ✅ ZERO |

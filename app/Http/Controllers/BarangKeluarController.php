@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BarangKeluar;
 use App\Models\Barang;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
+use App\Models\BarangKeluar;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class BarangKeluarController extends Controller
 {
@@ -29,6 +29,7 @@ class BarangKeluarController extends Controller
     public function create(): View
     {
         $barang = Barang::all();
+
         return view('barang_keluar.create', compact('barang'));
     }
 
@@ -74,6 +75,7 @@ class BarangKeluarController extends Controller
     public function edit(BarangKeluar $barangKeluar): View
     {
         $barang = Barang::all();
+
         return view('barang_keluar.edit', compact('barangKeluar', 'barang'));
     }
 

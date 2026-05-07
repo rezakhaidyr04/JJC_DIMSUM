@@ -86,6 +86,7 @@ class BarangMasuk extends Model
     public function sumberLabel(): string
     {
         $s = strtolower((string) $this->sumber);
+
         return match ($s) {
             'manual' => 'Restock Manual',
             'sisa_cabang' => 'Sisa Cabang',
