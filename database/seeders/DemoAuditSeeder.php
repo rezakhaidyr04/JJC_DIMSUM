@@ -31,7 +31,7 @@ class DemoAuditSeeder extends Seeder
                 [
                     'barang_id' => $item->id,
                     'user_id' => $karyawan->id,
-                    'tanggal' => $now->copy()->subDays(2 + $index)->toDateString(),
+                    'tanggal_masuk' => $now->copy()->subDays(2 + $index)->toDateString(),
                     'jumlah' => 5 + $index,
                 ],
                 [
@@ -45,7 +45,7 @@ class DemoAuditSeeder extends Seeder
                 [
                     'barang_id' => $item->id,
                     'user_id' => $karyawan->id,
-                    'tanggal' => $now->copy()->subDays(1 + $index)->toDateString(),
+                    'tanggal_keluar' => $now->copy()->subDays(1 + $index)->toDateString(),
                     'jumlah' => 2 + $index,
                 ],
                 [

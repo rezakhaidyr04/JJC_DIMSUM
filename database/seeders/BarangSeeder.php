@@ -21,7 +21,12 @@ class BarangSeeder extends Seeder
         ];
 
         foreach ($items as $item) {
-            Barang::create($item);
+            Barang::updateOrCreate(
+                ['nama_barang' => $item['nama_barang']],
+                [
+                    'stok' => $item['stok'],
+                ]
+            );
         }
     }
 }
