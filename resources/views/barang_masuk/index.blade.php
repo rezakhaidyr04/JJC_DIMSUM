@@ -322,10 +322,6 @@
                             <a href="{{ route('barang-masuk.create') }}" class="btn btn-success btn-sm">
                                 <i class="fas fa-plus"></i> Tambah
                             </a>
-                        @elseif(Auth::user()->isOwner())
-                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#karyawanOnlyModal">
-                                <i class="fas fa-plus"></i> Tambah
-                            </button>
                         @endif
                     </div>
                 </div>

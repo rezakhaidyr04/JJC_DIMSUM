@@ -34,7 +34,6 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
         .barang-insights {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -50,19 +49,6 @@
             box-shadow: 0 8px 24px rgba(198, 40, 51, 0.08);
             transition: var(--transition);
             position: relative;
-            overflow: hidden;
-            animation: slideInDown 0.7s ease forwards;
-        }
-
-        .barang-insight::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, #cf202c 0%, #c62833 50%, #8f1b24 100%);
-            box-shadow: 0 2px 8px rgba(198, 40, 51, 0.2);
         }
 
         .barang-insight::after {
@@ -407,7 +393,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Daftar Barang</h3>
-                    @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
+                    @if(Auth::user()->isKaryawan())
                         <div class="card-tools">
                             <a href="{{ route('barang.create') }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus"></i> Tambah Barang
@@ -447,7 +433,7 @@
                                 <th>Stok Minimal</th>
                                 <th>Status</th>
                                 <th style="width: 12%">Stok</th>
-                                @if(Auth::user()->isOwner())
+                                @if(Auth::user()->isKaryawan())
                                     <th style="width: 18%">Aksi</th>
                                 @endif
                             </tr>
@@ -465,7 +451,7 @@
                                         <td>
                                             <span class="badge barang-stok">{{ $item->stok }}</span>
                                         </td>
-                                        @if(Auth::user()->isOwner())
+                                        @if(Auth::user()->isKaryawan())
                                             <td>
                                                 <div class="actions-inline">
                                                     <a href="{{ route('barang.edit', $item->id) }}" class="btn btn-warning btn-sm">
@@ -487,7 +473,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="{{ Auth::user()->isOwner() ? 4 : 3 }}" class="text-center text-muted">Tidak ada data</td>
+                                    <td colspan="{{ Auth::user()->isKaryawan() ? 8 : 7 }}" class="text-center text-muted">Tidak ada data</td>
                                 </tr>
                             @endif
                         </tbody>

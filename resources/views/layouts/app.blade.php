@@ -105,6 +105,7 @@
         .navbar-brand-combined {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             color: #fff;
             font-weight: 700;
@@ -267,6 +268,7 @@
             padding: 1rem !important;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
 
         .brand-link .brand-text {
@@ -276,7 +278,7 @@
         }
 
         .brand-logo-image {
-            width: 38px;
+            width: 54px;
             aspect-ratio: 1 / 1;
             border-radius: 999px;
             border: 1px solid rgba(255, 237, 78, 0.55);
@@ -790,7 +792,6 @@
             <!-- Brand/Logo -->
             <a href="{{ route('dashboard') }}" class="brand-link text-decoration-none">
                 <img src="{{ asset('images/logo-login.png') }}" alt="Logo Jajanan Cikampek" class="brand-logo-image">
-                <span class="brand-text ms-2">Jajanan Cikampek</span>
             </a>
 
             <!-- Sidebar Menu -->
@@ -866,7 +867,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0"><i class="fas fa-chevron-right me-2"></i>@yield('page-title')</h1>
+                            <h1 class="m-0">@yield('page-title')</h1>
                         </div>
                     </div>
                 </div>

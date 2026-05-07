@@ -262,7 +262,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Data Barang Keluar</h3>
-                    @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
+                    @if(Auth::user()->isKaryawan())
                         <div class="card-tools">
                             <a href="{{ route('barang-keluar.create') }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-plus"></i> Tambah
