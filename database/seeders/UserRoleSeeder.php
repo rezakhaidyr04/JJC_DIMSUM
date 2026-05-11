@@ -13,8 +13,10 @@ class UserRoleSeeder extends Seeder
      */
     public function run(): void
     {
+        User::where('email', 'owner@jjc-dimsum.test')->delete();
+
         User::updateOrCreate(
-            ['email' => 'owner@jjc-dimsum.test'],
+            ['email' => 'issmadamayanti@gmail.com'],
             [
                 'name' => 'Owner',
                 'role' => 'owner',

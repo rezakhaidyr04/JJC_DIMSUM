@@ -8,6 +8,7 @@ Sistem manajemen stok barang untuk operasional restoran dimsum. Dibangun dengan 
 - Stok opname harian per cabang
 - Laporan stok harian dengan ekspor PDF
 - Notifikasi stok rendah
+- Notifikasi stok otomatis ke owner via WhatsApp
 - Role-based access (owner dan karyawan)
 
 ## Teknologi
@@ -32,6 +33,16 @@ Jika akun belum ada:
 php artisan migrate
 php artisan db:seed
 ```
+
+Untuk notifikasi otomatis, pastikan scheduler Laravel berjalan di server:
+
+```bash
+php artisan schedule:run
+```
+
+Dan tambahkan cron server untuk menjalankan `schedule:run` tiap menit.
+
+Jika ingin WhatsApp aktif, isi konfigurasi `WHATSAPP_ALERT_ENABLED`, `WHATSAPP_API_URL`, `WHATSAPP_API_TOKEN`, dan `WHATSAPP_OWNER_NUMBER` di file `.env`.
 
 ## Instalasi dan Setup
 Lihat panduan lengkap di [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md).
