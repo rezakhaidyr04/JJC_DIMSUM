@@ -49,6 +49,8 @@
             transition: var(--transition);
             position: relative;
             animation: slideInUp 0.7s ease-out forwards;
+            display: flex;
+            flex-direction: column;
         }
 
         .dashboard-stat::before {
@@ -92,6 +94,7 @@
             gap: 1.2rem;
             position: relative;
             z-index: 1;
+            flex: 1;
         }
 
         .dashboard-stat__title {
@@ -160,6 +163,9 @@
             transition: var(--transition);
             position: relative;
             z-index: 1;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
         }
 
         .dashboard-stat:hover .dashboard-stat__footer {
