@@ -16,8 +16,7 @@ class LowStockAlertMail extends Mailable
         public array $items,
         public string $dateLabel,
         public string $timeLabel,
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
