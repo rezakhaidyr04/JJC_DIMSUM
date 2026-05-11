@@ -232,6 +232,33 @@
             color: #b8b8b8;
         }
 
+        .password-field {
+            position: relative;
+        }
+
+        .password-field .form-control {
+            padding-right: 46px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #6f6155;
+            padding: 4px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .password-toggle:hover,
+        .password-toggle:focus {
+            color: var(--brand-red);
+            outline: none;
+        }
+
         .form-control.is-invalid {
             border-color: var(--brand-red);
             box-shadow: none;
@@ -451,7 +478,12 @@
 
                             <div class="form-group">
                                 <label for="password" class="form-label">Kata Sandi</label>
-                                <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi Anda" required>
+                                <div class="password-field">
+                                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi Anda" required>
+                                    <button type="button" class="password-toggle" data-target="password" aria-label="Lihat password" aria-pressed="false">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
                                 @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
 
@@ -473,5 +505,29 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.password-toggle').forEach(function (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                var targetId = this.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+
+                if (!input) {
+                    return;
+                }
+
+                var isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+
+                var icon = this.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-eye', !isHidden);
+                    icon.classList.toggle('fa-eye-slash', isHidden);
+                }
+
+                this.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+                this.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Lihat password');
+            });
+        });
+    </script>
 </body>
 </html>

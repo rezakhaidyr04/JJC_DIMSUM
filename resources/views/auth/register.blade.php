@@ -126,6 +126,33 @@
             box-shadow: 0 0 0 0.2rem rgba(226, 29, 43, 0.14);
         }
 
+        .password-field {
+            position: relative;
+        }
+
+        .password-field .form-control {
+            padding-right: 46px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #6f6155;
+            padding: 4px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .password-toggle:hover,
+        .password-toggle:focus {
+            color: var(--brand-red);
+            outline: none;
+        }
+
         .btn-brand {
             width: 100%;
             border: 0;
@@ -268,13 +295,23 @@
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+                    <div class="password-field">
+                        <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+                        <button type="button" class="password-toggle" data-target="password" aria-label="Lihat password" aria-pressed="false">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                     @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
+                    <div class="password-field">
+                        <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
+                        <button type="button" class="password-toggle" data-target="password_confirmation" aria-label="Lihat password" aria-pressed="false">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                     @error('password_confirmation')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
 
@@ -288,5 +325,29 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.password-toggle').forEach(function (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                var targetId = this.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+
+                if (!input) {
+                    return;
+                }
+
+                var isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+
+                var icon = this.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-eye', !isHidden);
+                    icon.classList.toggle('fa-eye-slash', isHidden);
+                }
+
+                this.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+                this.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Lihat password');
+            });
+        });
+    </script>
 </body>
 </html>
