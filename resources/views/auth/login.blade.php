@@ -471,9 +471,9 @@
                             @csrf
 
                             <div class="form-group">
-                                <label for="email" class="form-label">Nomor WhatsApp atau Email</label>
-                                <input type="email" id="email" name="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror" placeholder="Masukkan nomor/email Anda" required autofocus>
-                                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <label for="identifier" class="form-label">Email atau Nomor WhatsApp</label>
+                                <input type="text" id="identifier" name="identifier" value="{{ old('identifier') }}" class="form-control @error('identifier') is-invalid @enderror" placeholder="Masukkan email atau nomor WhatsApp Anda" required autofocus>
+                                @error('identifier')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
 
                             <div class="form-group">
