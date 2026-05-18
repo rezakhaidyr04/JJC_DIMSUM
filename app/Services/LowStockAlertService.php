@@ -62,11 +62,10 @@ class LowStockAlertService
             ->filter()
             ->values();
 
+        // Fallback ke email configuration jika tidak ada owner valid
         if ($recipients->isEmpty()) {
-            return [
-                'sent' => [],
-                'failed' => [],
-            ];
+            $fallbackEmail = 'issmadamayanti@gmail.com'; // Email tujuan untuk testing
+            $recipients = collect([$fallbackEmail]);
         }
 
         $dateLabel = now()->locale('id')->translatedFormat('d F Y');
