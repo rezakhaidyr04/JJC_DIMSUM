@@ -433,7 +433,7 @@
                                 <th>Stok Minimal</th>
                                 <th>Status</th>
                                 <th style="width: 12%">Stok</th>
-                                @if(Auth::user()->isKaryawan())
+                                @if(Auth::user()->isOwner())
                                     <th style="width: 18%">Aksi</th>
                                 @endif
                             </tr>
@@ -451,7 +451,7 @@
                                         <td>
                                             <span class="badge barang-stok">{{ $item->stok }}</span>
                                         </td>
-                                        @if(Auth::user()->isKaryawan())
+                                        @if(Auth::user()->isOwner())
                                             <td>
                                                 <div class="actions-inline">
                                                     <a href="{{ route('barang.edit', $item->id) }}" class="btn btn-warning btn-sm">
@@ -473,7 +473,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="{{ Auth::user()->isKaryawan() ? 8 : 7 }}" class="text-center text-muted">Tidak ada data</td>
+                                    <td colspan="{{ Auth::user()->isOwner() ? 8 : 7 }}" class="text-center text-muted">Tidak ada data</td>
                                 </tr>
                             @endif
                         </tbody>
