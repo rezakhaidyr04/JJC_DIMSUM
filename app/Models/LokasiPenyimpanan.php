@@ -13,6 +13,12 @@ class LokasiPenyimpanan extends Model
 
     protected $table = 'lokasi_penyimpanans';
 
+    protected $primaryKey = 'id_lokasi';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'cabang_id',
         'nama_lokasi',
@@ -30,7 +36,7 @@ class LokasiPenyimpanan extends Model
      */
     public function cabang(): BelongsTo
     {
-        return $this->belongsTo(Cabang::class);
+        return $this->belongsTo(Cabang::class, 'cabang_id', 'id_cabang');
     }
 
     /**
@@ -38,7 +44,7 @@ class LokasiPenyimpanan extends Model
      */
     public function barangItems(): HasMany
     {
-        return $this->hasMany(Barang::class, 'lokasi_default_id');
+        return $this->hasMany(Barang::class, 'lokasi_default_id', 'id_lokasi');
     }
 
     /**

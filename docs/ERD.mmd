@@ -1,0 +1,129 @@
+erDiagram
+    BARANG {
+        int id_barang PK
+        string kode_barang
+        string nama_barang
+        string satuan
+        int stok_min
+        string status
+        int stok
+        int lokasi_default_id FK?
+    }
+
+    BARANG_MASUK {
+        int id_barang_masuk PK
+        int barang_id FK
+        int user_id FK
+        int cabang_id FK
+        int lokasi_id FK
+        int jumlah
+        string sumber
+        date tanggal_masuk
+        string void_status
+        string void_reason
+        int void_requested_by FK
+        int void_approved_by FK
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+    }
+
+    BARANG_KELUAR {
+        int id_barang_keluar PK
+        int barang_id FK
+        int user_id FK
+        int cabang_id FK
+        int lokasi_id FK
+        int barang_masuk_id FK?
+        int jumlah
+        date tanggal_keluar
+        string void_status
+        string void_reason
+        int void_requested_by FK
+        int void_approved_by FK
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+    }
+
+    CABANG {
+        int id_cabang PK
+        string nama_cabang
+        string kode_cabang
+        string alamat
+        bool aktif
+    }
+
+    LOKASI_PENYIMPANANS {
+        int id_lokasi PK
+        int cabang_id FK
+        string nama_lokasi
+        string tipe
+        string deskripsi
+        bool aktif
+    }
+
+    CABANG_DISTRIBUSIS {
+        int id_cabang_distribusi PK
+        date tanggal
+        int cabang_id FK
+        int user_id FK
+        text catatan
+    }
+
+    CABANG_DISTRIBUSI_ITEMS {
+        int id_cabang_distribusi_item PK
+        int cabang_distribusi_id FK
+        int barang_id FK
+        int jumlah_bawa
+        int jumlah_sisa
+        int jumlah_terpakai
+        int barang_keluar_id FK?
+        int barang_masuk_id FK?
+    }
+
+    STOK_OPNAMES {
+        int id_stok_opname PK
+        int barang_id FK
+        int user_id FK
+        date tanggal
+        int jumlah_fisik
+        int jumlah_sistem
+        int selisih
+        string status
+    }
+
+    USERS {
+        int id_user PK
+        string name
+        string email
+        string whatsapp
+        string role
+        string password
+    }
+
+    %% Relationships
+    BARANG ||--o{ BARANG_MASUK : "barang_id"
+    BARANG ||--o{ BARANG_KELUAR : "barang_id"
+    BARANG ||--o{ CABANG_DISTRIBUSI_ITEMS : "barang_id"
+    BARANG ||--o{ STOK_OPNAMES : "barang_id"
+
+    USERS ||--o{ BARANG_MASUK : "user_id"
+    USERS ||--o{ BARANG_KELUAR : "user_id"
+    USERS ||--o{ CABANG_DISTRIBUSIS : "user_id"
+    USERS ||--o{ STOK_OPNAMES : "user_id"
+
+    CABANG ||--o{ LOKASI_PENYIMPANANS : "cabang_id"
+    CABANG ||--o{ CABANG_DISTRIBUSIS : "cabang_id"
+    CABANG ||--o{ BARANG_MASUK : "cabang_id"
+    CABANG ||--o{ BARANG_KELUAR : "cabang_id"
+
+    LOKASI_PENYIMPANANS ||--o{ BARANG_MASUK : "lokasi_id"
+    LOKASI_PENYIMPANANS ||--o{ BARANG_KELUAR : "lokasi_id"
+    LOKASI_PENYIMPANANS ||--o{ BARANG : "lokasi_default_id"
+
+    CABANG_DISTRIBUSIS ||--o{ CABANG_DISTRIBUSI_ITEMS : "cabang_distribusi_id"
+    CABANG_DISTRIBUSI_ITEMS }o--|| BARANG_KELUAR : "barang_keluar_id"
+    CABANG_DISTRIBUSI_ITEMS }o--|| BARANG_MASUK : "barang_masuk_id"
+
+    BARANG_MASUK ||--o{ BARANG_KELUAR : "barang_masuk_id"

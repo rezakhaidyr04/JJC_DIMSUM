@@ -13,6 +13,12 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $primaryKey = 'id_user';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -58,6 +64,6 @@ class User extends Authenticatable
 
     public function cabangDistribusis(): HasMany
     {
-        return $this->hasMany(CabangDistribusi::class);
+        return $this->hasMany(CabangDistribusi::class, 'user_id', 'id_user');
     }
 }

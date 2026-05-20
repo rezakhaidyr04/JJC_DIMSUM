@@ -10,6 +10,12 @@ class CabangDistribusiItem extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id_cabang_distribusi_item';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'cabang_distribusi_id',
         'barang_id',
@@ -22,21 +28,21 @@ class CabangDistribusiItem extends Model
 
     public function distribusi(): BelongsTo
     {
-        return $this->belongsTo(CabangDistribusi::class, 'cabang_distribusi_id');
+        return $this->belongsTo(CabangDistribusi::class, 'cabang_distribusi_id', 'id_cabang_distribusi');
     }
 
     public function barang(): BelongsTo
     {
-        return $this->belongsTo(Barang::class);
+        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
     }
 
     public function barangKeluar(): BelongsTo
     {
-        return $this->belongsTo(BarangKeluar::class);
+        return $this->belongsTo(BarangKeluar::class, 'barang_keluar_id', 'id_barang_keluar');
     }
 
     public function barangMasuk(): BelongsTo
     {
-        return $this->belongsTo(BarangMasuk::class);
+        return $this->belongsTo(BarangMasuk::class, 'barang_masuk_id', 'id_barang_masuk');
     }
 }

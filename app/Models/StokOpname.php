@@ -10,6 +10,12 @@ class StokOpname extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id_stok_opname';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'barang_id',
         'user_id',
@@ -26,11 +32,11 @@ class StokOpname extends Model
 
     public function barang(): BelongsTo
     {
-        return $this->belongsTo(Barang::class);
+        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id_user');
     }
 }

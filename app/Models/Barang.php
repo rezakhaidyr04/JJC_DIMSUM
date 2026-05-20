@@ -12,6 +12,12 @@ class Barang extends Model
 
     protected $table = 'barang';
 
+    protected $primaryKey = 'id_barang';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'kode_barang',
         'nama_barang',
@@ -63,7 +69,7 @@ class Barang extends Model
      */
     public function barangMasuk(): HasMany
     {
-        return $this->hasMany(BarangMasuk::class);
+        return $this->hasMany(BarangMasuk::class, 'barang_id', 'id_barang');
     }
 
     /**
@@ -71,7 +77,7 @@ class Barang extends Model
      */
     public function barangKeluar(): HasMany
     {
-        return $this->hasMany(BarangKeluar::class);
+        return $this->hasMany(BarangKeluar::class, 'barang_id', 'id_barang');
     }
 
     /**
@@ -79,7 +85,7 @@ class Barang extends Model
      */
     public function cabangDistribusiItems(): HasMany
     {
-        return $this->hasMany(CabangDistribusiItem::class);
+        return $this->hasMany(CabangDistribusiItem::class, 'barang_id', 'id_barang');
     }
 
     /**

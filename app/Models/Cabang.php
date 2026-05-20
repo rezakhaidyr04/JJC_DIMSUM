@@ -10,6 +10,12 @@ class Cabang extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id_cabang';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'nama_cabang',
         'kode_cabang',
@@ -23,7 +29,7 @@ class Cabang extends Model
 
     public function distribusis(): HasMany
     {
-        return $this->hasMany(CabangDistribusi::class);
+        return $this->hasMany(CabangDistribusi::class, 'cabang_id', 'id_cabang');
     }
 
     /**
@@ -31,6 +37,6 @@ class Cabang extends Model
      */
     public function lokasiPenyimpanans(): HasMany
     {
-        return $this->hasMany(LokasiPenyimpanan::class);
+        return $this->hasMany(LokasiPenyimpanan::class, 'cabang_id', 'id_cabang');
     }
 }

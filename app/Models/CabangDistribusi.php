@@ -11,6 +11,12 @@ class CabangDistribusi extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id_cabang_distribusi';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'tanggal',
         'cabang_id',
@@ -24,16 +30,16 @@ class CabangDistribusi extends Model
 
     public function cabang(): BelongsTo
     {
-        return $this->belongsTo(Cabang::class);
+        return $this->belongsTo(Cabang::class, 'cabang_id', 'id_cabang');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id_user');
     }
 
     public function items(): HasMany
     {
-        return $this->hasMany(CabangDistribusiItem::class);
+        return $this->hasMany(CabangDistribusiItem::class, 'cabang_distribusi_id', 'id_cabang_distribusi');
     }
 }

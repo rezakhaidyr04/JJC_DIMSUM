@@ -13,6 +13,12 @@ class BarangKeluar extends Model
 
     protected $table = 'barang_keluar';
 
+    protected $primaryKey = 'id_barang_keluar';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'barang_id',
         'user_id',
@@ -45,7 +51,7 @@ class BarangKeluar extends Model
      */
     public function barang(): BelongsTo
     {
-        return $this->belongsTo(Barang::class);
+        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
     }
 
     /**
@@ -53,7 +59,7 @@ class BarangKeluar extends Model
      */
     public function cabang(): BelongsTo
     {
-        return $this->belongsTo(Cabang::class);
+        return $this->belongsTo(Cabang::class, 'cabang_id', 'id_cabang');
     }
 
     /**
@@ -61,7 +67,7 @@ class BarangKeluar extends Model
      */
     public function lokasi(): BelongsTo
     {
-        return $this->belongsTo(LokasiPenyimpanan::class, 'lokasi_id');
+        return $this->belongsTo(LokasiPenyimpanan::class, 'lokasi_id', 'id_lokasi');
     }
 
     /**
@@ -69,7 +75,7 @@ class BarangKeluar extends Model
      */
     public function barangMasukFifo(): BelongsTo
     {
-        return $this->belongsTo(BarangMasuk::class, 'barang_masuk_id');
+        return $this->belongsTo(BarangMasuk::class, 'barang_masuk_id', 'id_barang_masuk');
     }
 
     /**
@@ -77,7 +83,7 @@ class BarangKeluar extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id_user');
     }
 
     /**
@@ -85,7 +91,7 @@ class BarangKeluar extends Model
      */
     public function voidRequester(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'void_requested_by');
+        return $this->belongsTo(User::class, 'void_requested_by', 'id_user');
     }
 
     /**
@@ -93,6 +99,6 @@ class BarangKeluar extends Model
      */
     public function voidApprover(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'void_approved_by');
+        return $this->belongsTo(User::class, 'void_approved_by', 'id_user');
     }
 }
