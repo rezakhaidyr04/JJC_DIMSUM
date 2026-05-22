@@ -454,11 +454,11 @@
                                         @if(Auth::user()->isOwner())
                                             <td>
                                                 <div class="actions-inline">
-                                                    <a href="{{ route('barang.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                                    <a href="{{ route('barang.edit', $item->id_barang) }}" class="btn btn-warning btn-sm">
                                                         <i class="fas fa-edit" aria-hidden="true"></i>
                                                         <span class="action-label">Edit</span>
                                                     </a>
-                                                    <form method="POST" action="{{ route('barang.destroy', $item->id) }}">
+                                                    <form method="POST" action="{{ route('barang.destroy', $item->id_barang) }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" aria-label="Hapus data barang">

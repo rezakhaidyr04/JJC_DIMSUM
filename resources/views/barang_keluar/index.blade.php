@@ -331,7 +331,7 @@
                                                 <div class="actions-inline">
                                                     @if(Auth::user()->isOwner())
                                                         @if($item->void_status === 'pending')
-                                                            <form method="POST" action="{{ route('barang-keluar.approve-void', $item->id) }}">
+                                                            <form method="POST" action="{{ route('barang-keluar.approve-void', $item->id_barang_keluar) }}">
                                                                 @csrf
                                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Setujui void dan hapus data ini?')">
                                                                     <i class="fas fa-check"></i>
@@ -339,11 +339,11 @@
                                                                 </button>
                                                             </form>
                                                         @else
-                                                            <a href="{{ route('barang-keluar.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                                            <a href="{{ route('barang-keluar.edit', $item->id_barang_keluar) }}" class="btn btn-warning btn-sm">
                                                                 <i class="fas fa-edit" aria-hidden="true"></i>
                                                                 <span class="action-label">Edit</span>
                                                             </a>
-                                                            <form method="POST" action="{{ route('barang-keluar.destroy', $item->id) }}">
+                                                            <form method="POST" action="{{ route('barang-keluar.destroy', $item->id_barang_keluar) }}">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" aria-label="Hapus barang keluar">
@@ -356,7 +356,7 @@
                                                         @if($item->void_status === 'pending')
                                                             <span class="badge bg-warning text-dark">Menunggu approval owner</span>
                                                         @else
-                                                            <form method="POST" action="{{ route('barang-keluar.request-void', $item->id) }}" class="void-request-form">
+                                                            <form method="POST" action="{{ route('barang-keluar.request-void', $item->id_barang_keluar) }}" class="void-request-form">
                                                                 @csrf
                                                                 <input type="hidden" name="void_reason" value="">
                                                                 <button type="button" class="btn btn-outline-danger btn-sm js-btn-void">

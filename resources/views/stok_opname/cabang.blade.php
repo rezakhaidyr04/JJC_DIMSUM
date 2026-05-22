@@ -83,27 +83,35 @@
                                             <tr>
                                                 <th style="width: 5%;">No</th>
                                                 <th>Nama Barang</th>
+                                                <th style="width: 18%;">Stok Saat Ini (Global)</th>
                                                 <th style="width: 22%;">Jumlah Dibawa Ke Cabang</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($barangList as $index => $barang)
                                                 @php
-                                                    $existingItem = $existingItemsByBarang->get($barang->id);
+                                                    $existingItem = $existingItemsByBarang->get($barang->id_barang);
+                                                    $stokSaatIni = (int) ($barang->stok ?? 0);
                                                 @endphp
                                                 <tr>
                                                     <td class="text-center">{{ $index + 1 }}</td>
                                                     <td>{{ $barang->nama_barang }}</td>
+                                                    <td class="text-center">
+                                                        <span class="badge bg-info text-dark">{{ $stokSaatIni }}</span>
+                                                    </td>
                                                     <td>
-                                                        <input type="hidden" name="berangkat[{{ $index }}][barang_id]" value="{{ $barang->id }}">
+                                                        <input type="hidden" name="berangkat[{{ $index }}][barang_id]" value="{{ $barang->id_barang }}">
                                                         <input
                                                             type="number"
-                                                            class="form-control"
+                                                            class="form-control js-pagi-bawa"
                                                             name="berangkat[{{ $index }}][jumlah_bawa]"
                                                             min="0"
+                                                            max="{{ $stokSaatIni }}"
                                                             value="{{ old('berangkat.' . $index . '.jumlah_bawa', $existingItem?->jumlah_bawa ?? 0) }}"
                                                             placeholder="0"
+                                                            data-max-stok="{{ $stokSaatIni }}"
                                                         >
+                                                        <small class="text-muted">Maks: {{ $stokSaatIni }}</small>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -144,7 +152,7 @@
                                         <tbody>
                                             @foreach($barangList as $index => $barang)
                                                 @php
-                                                    $existingItem = $existingItemsByBarang->get($barang->id);
+                                                    $existingItem = $existingItemsByBarang->get($barang->id_barang);
                                                     $jumlahBawa = (int) ($existingItem?->jumlah_bawa ?? 0);
                                                     $jumlahSisa = (int) ($existingItem?->jumlah_sisa ?? 0);
                                                 @endphp
@@ -153,7 +161,7 @@
                                                     <td>{{ $barang->nama_barang }}</td>
                                                     <td>
                                                         <input type="number" class="form-control js-malam-bawa" value="{{ $jumlahBawa }}" readonly>
-                                                        <input type="hidden" name="sisa[{{ $index }}][barang_id]" value="{{ $barang->id }}">
+                                                        <input type="hidden" name="sisa[{{ $index }}][barang_id]" value="{{ $barang->id_barang }}">
                                                     </td>
                                                     <td>
                                                         <input
@@ -190,6 +198,51 @@
         </div>
     </div>
 
+    @push('styles')
+    <style>
+        .stok-alert-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .stok-alert-overlay.is-active {
+            display: flex;
+        }
+        .stok-alert-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 24px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+        .stok-alert-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .stok-alert-actions {
+            margin-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+    </style>
+    @endpush
+
+    <div id="stokAlert" class="stok-alert-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="stok-alert-card">
+            <div class="stok-alert-title">Peringatan</div>
+            <div id="stokAlertMessage">Jumlah tidak boleh melebihi stok maksimal.</div>
+            <div class="stok-alert-actions">
+                <button type="button" class="btn btn-primary btn-sm" id="stokAlertClose">OK</button>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         document.querySelectorAll('table tbody tr').forEach(function (row) {
@@ -215,6 +268,42 @@
             sisaInput.addEventListener('input', recalc);
             recalc();
         });
+
+        document.querySelectorAll('.js-pagi-bawa').forEach(function (input) {
+            const maxStok = parseInt(input.dataset.maxStok || '0', 10);
+            const alertOverlay = document.getElementById('stokAlert');
+            const alertMessage = document.getElementById('stokAlertMessage');
+
+            input.addEventListener('input', function () {
+                const value = parseInt(input.value || '0', 10);
+                if (value > maxStok) {
+                    alertMessage.textContent = 'Jumlah tidak boleh melebihi stok maksimal (' + maxStok + ').';
+                    alertOverlay.classList.add('is-active');
+                    alertOverlay.setAttribute('aria-hidden', 'false');
+                }
+            });
+        });
+
+        (function () {
+            const alertOverlay = document.getElementById('stokAlert');
+            const alertClose = document.getElementById('stokAlertClose');
+
+            if (!alertOverlay || !alertClose) {
+                return;
+            }
+
+            const closeAlert = function () {
+                alertOverlay.classList.remove('is-active');
+                alertOverlay.setAttribute('aria-hidden', 'true');
+            };
+
+            alertClose.addEventListener('click', closeAlert);
+            alertOverlay.addEventListener('click', function (event) {
+                if (event.target === alertOverlay) {
+                    closeAlert();
+                }
+            });
+        })();
 
         // scroll on hash
         document.addEventListener('DOMContentLoaded', function () {

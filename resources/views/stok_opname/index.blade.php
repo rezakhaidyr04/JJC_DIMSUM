@@ -261,21 +261,34 @@
                     <div class="mt-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title">Pilih Cabang (klik untuk input operasional)</h5>
+                                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                                    <h5 class="card-title mb-0">Pilih Cabang (klik untuk input operasional)</h5>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalAktifkanCabang">
+                                            <i class="fas fa-check"></i> Aktifkan Cabang
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalNonaktifCabang">
+                                            <i class="fas fa-ban"></i> Nonaktifkan Cabang
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahCabang">
+                                            <i class="fas fa-plus"></i> Tambah Cabang
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     @foreach($cabangList as $cabang)
                                         <div class="col-12 col-md-6">
-                                            <a href="{{ route('stok-opname.cabang', $cabang->id) }}?tanggal={{ $selectedTanggal }}#input-pagi" class="text-decoration-none">
+                                            <a href="{{ route('stok-opname.cabang', $cabang->id_cabang) }}?tanggal={{ $selectedTanggal }}#input-pagi" class="text-decoration-none">
                                                 <div class="cabang-card">
                                                     <div>
                                                         <strong>{{ $cabang->nama_cabang }}</strong>
                                                         <div class="text-muted">{{ $cabang->kode_cabang ?? '' }} • ID: {{ $cabang->id }}</div>
                                                     </div>
                                                     <div class="cabang-button-group mt-2">
-                                                        <a href="{{ route('stok-opname.cabang', $cabang->id) }}?tanggal={{ $selectedTanggal }}#input-pagi" class="btn btn-primary btn-sm">☀️ Pagi</a>
-                                                        <a href="{{ route('stok-opname.cabang', $cabang->id) }}?tanggal={{ $selectedTanggal }}#input-malam" class="btn btn-secondary btn-sm">🌙 Malam</a>
+                                                        <a href="{{ route('stok-opname.cabang', $cabang->id_cabang) }}?tanggal={{ $selectedTanggal }}#input-pagi" class="btn btn-primary btn-sm">☀️ Pagi</a>
+                                                        <a href="{{ route('stok-opname.cabang', $cabang->id_cabang) }}?tanggal={{ $selectedTanggal }}#input-malam" class="btn btn-secondary btn-sm">🌙 Malam</a>
                                                     </div>
                                                 </div>
                                             </a>
@@ -286,6 +299,99 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalTambahCabang" tabindex="-1" aria-labelledby="modalTambahCabangLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('stok-opname.cabang.store', ['tanggal' => $selectedTanggal]) }}">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTambahCabangLabel">Tambah Cabang Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nama_cabang" class="form-label">Nama Cabang</label>
+                            <input type="text" id="nama_cabang" name="nama_cabang" class="form-control" required maxlength="120" placeholder="Contoh: Sukasari">
+                        </div>
+                        <div class="mb-3">
+                            <label for="alamat" class="form-label">Alamat (Opsional)</label>
+                            <input type="text" id="alamat" name="alamat" class="form-control" maxlength="255" placeholder="Alamat cabang">
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="aktif" name="aktif" class="form-check-input" value="1" checked>
+                            <label for="aktif" class="form-check-label">Aktif</label>
+                        </div>
+                        <small class="text-muted d-block mt-2">Kode cabang dibuat otomatis.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Cabang</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNonaktifCabang" tabindex="-1" aria-labelledby="modalNonaktifCabangLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('stok-opname.cabang.deactivate', ['tanggal' => $selectedTanggal]) }}">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalNonaktifCabangLabel">Nonaktifkan Cabang</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="cabang_nonaktif" class="form-label">Pilih Cabang</label>
+                            <select id="cabang_nonaktif" name="cabang_id" class="form-select" required>
+                                <option value="">-- Pilih Cabang --</option>
+                                @foreach($cabangList as $cabang)
+                                    <option value="{{ $cabang->id_cabang }}">{{ $cabang->nama_cabang }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <small class="text-muted">Cabang akan disembunyikan dari daftar input setelah dinonaktifkan.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Nonaktifkan cabang terpilih?')">Nonaktifkan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAktifkanCabang" tabindex="-1" aria-labelledby="modalAktifkanCabangLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('stok-opname.cabang.activate', ['tanggal' => $selectedTanggal]) }}">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalAktifkanCabangLabel">Aktifkan Cabang</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="cabang_aktif" class="form-label">Pilih Cabang</label>
+                            <select id="cabang_aktif" name="cabang_id" class="form-select" required>
+                                <option value="">-- Pilih Cabang --</option>
+                                @foreach($inactiveCabangs as $cabang)
+                                    <option value="{{ $cabang->id_cabang }}">{{ $cabang->nama_cabang }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <small class="text-muted">Cabang akan muncul kembali di daftar input setelah diaktifkan.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Aktifkan cabang terpilih?')">Aktifkan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

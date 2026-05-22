@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class StokOpnameController extends Controller
@@ -21,7 +22,7 @@ class StokOpnameController extends Controller
      */
     public function index(Request $request): View
     {
-        $barangList = Barang::orderBy('nama_barang')->get(['id', 'nama_barang']);
+        $barangList = Barang::orderBy('nama_barang')->get(['id_barang', 'nama_barang', 'stok']);
         // Urutan prioritas cabang sesuai permintaan user. Nama harus sama persis dengan data DB.
         $preferredOrder = [
             'Cab 1 pawarengan',
@@ -38,6 +39,7 @@ class StokOpnameController extends Controller
 
         // Ambil semua cabang aktif dari DB terlebih dahulu
         $allCabangs = Cabang::where('aktif', true)->get();
+        $inactiveCabangs = Cabang::where('aktif', false)->get();
 
         // Bangun daftar terurut sesuai preferensi user. Jika nama preferensi tidak ditemukan,
         // tetap sertakan entri dengan 'model' = null sehingga masih terlihat di UI.
@@ -91,6 +93,7 @@ class StokOpnameController extends Controller
         return view('stok_opname.index', [
             'barangList' => $barangList,
             'cabangList' => $cabangList,
+            'inactiveCabangs' => $inactiveCabangs,
             'todayRecords' => $todayRecords,
             'selectedTanggal' => $selectedTanggal,
             'selectedCabang' => $selectedCabang,
@@ -103,10 +106,10 @@ class StokOpnameController extends Controller
      */
     public function showCabang(Request $request, Cabang $cabang): View
     {
-        $barangList = Barang::orderBy('nama_barang')->get(['id', 'nama_barang']);
+        $barangList = Barang::orderBy('nama_barang')->get(['id_barang', 'nama_barang', 'stok']);
 
         $selectedTanggal = $request->query('tanggal', now()->toDateString());
-        $selectedCabang = $cabang->id;
+        $selectedCabang = $cabang->id_cabang;
 
         $selectedHeader = CabangDistribusi::with('items')
             ->whereDate('tanggal', $selectedTanggal)
@@ -125,8 +128,9 @@ class StokOpnameController extends Controller
             ->latest()
             ->get();
 
+
         $recentActivities = CabangDistribusi::with(['user', 'items.barang'])
-            ->where('cabang_id', $cabang->id)
+            ->where('cabang_id', $cabang->id_cabang)
             ->latest()
             ->take(8)
             ->get()
@@ -162,11 +166,11 @@ class StokOpnameController extends Controller
     public function storeBerangkat(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'cabang_id' => ['required', 'exists:cabangs,id'],
+            'cabang_id' => ['required', 'exists:cabangs,id_cabang'],
             'tanggal' => ['required', 'date'],
             'catatan' => ['nullable', 'string', 'max:500'],
             'berangkat' => ['required', 'array', 'min:1'],
-            'berangkat.*.barang_id' => ['required', 'exists:barang,id'],
+            'berangkat.*.barang_id' => ['required', 'exists:barang,id_barang'],
             'berangkat.*.jumlah_bawa' => ['required', 'integer', 'min:0'],
         ]);
 
@@ -192,7 +196,7 @@ class StokOpnameController extends Controller
             foreach ($rows as $row) {
                 $barang = Barang::findOrFail($row['barang_id']);
                 $jumlahBawa = (int) $row['jumlah_bawa'];
-                $item = $header->items()->where('barang_id', $barang->id)->first();
+                $item = $header->items()->where('barang_id', $barang->id_barang)->first();
 
                 if ($item && $item->jumlah_sisa > $jumlahBawa) {
                     abort(422, 'Jumlah dibawa tidak boleh kurang dari jumlah sisa yang sudah tercatat malam hari.');
@@ -223,7 +227,7 @@ class StokOpnameController extends Controller
                     }
                 } else {
                     $barangKeluar = BarangKeluar::create([
-                        'barang_id' => $barang->id,
+                        'barang_id' => $barang->id_barang,
                         'user_id' => auth()->id(),
                         'jumlah' => $jumlahBawa,
                         'tanggal_keluar' => $validated['tanggal'],
@@ -234,7 +238,7 @@ class StokOpnameController extends Controller
 
                     $barang->decrement('stok', $jumlahBawa);
                     if ($item) {
-                        $item->barang_keluar_id = $barangKeluar->id;
+                        $item->barang_keluar_id = $barangKeluar->id_barang_keluar;
                     }
                 }
 
@@ -243,11 +247,11 @@ class StokOpnameController extends Controller
 
                 if (! $item) {
                     $header->items()->create([
-                        'barang_id' => $barang->id,
+                        'barang_id' => $barang->id_barang,
                         'jumlah_bawa' => $jumlahBawa,
                         'jumlah_sisa' => 0,
                         'jumlah_terpakai' => $jumlahBawa,
-                        'barang_keluar_id' => $barangKeluar->id ?? null,
+                        'barang_keluar_id' => $barangKeluar->id_barang_keluar ?? null,
                         'barang_masuk_id' => null,
                     ]);
                 } else {
@@ -274,10 +278,10 @@ class StokOpnameController extends Controller
     public function storeSisa(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'cabang_id' => ['required', 'exists:cabangs,id'],
+            'cabang_id' => ['required', 'exists:cabangs,id_cabang'],
             'tanggal' => ['required', 'date'],
             'sisa' => ['required', 'array', 'min:1'],
-            'sisa.*.barang_id' => ['required', 'exists:barang,id'],
+            'sisa.*.barang_id' => ['required', 'exists:barang,id_barang'],
             'sisa.*.jumlah_sisa' => ['required', 'integer', 'min:0'],
         ]);
 
@@ -300,7 +304,7 @@ class StokOpnameController extends Controller
             foreach ($validated['sisa'] as $row) {
                 $barang = Barang::findOrFail($row['barang_id']);
                 $jumlahSisaBaru = (int) $row['jumlah_sisa'];
-                $item = $itemMap->get($barang->id);
+                $item = $itemMap->get($barang->id_barang);
 
                 if (! $item) {
                     if ($jumlahSisaBaru > 0) {
@@ -342,7 +346,7 @@ class StokOpnameController extends Controller
                         }
                     } elseif ($jumlahSisaBaru > 0) {
                         $barangMasuk = BarangMasuk::create([
-                            'barang_id' => $barang->id,
+                            'barang_id' => $barang->id_barang,
                             'user_id' => auth()->id(),
                             'jumlah' => $jumlahSisaBaru,
                             'sumber' => 'sisa_cabang',
@@ -352,7 +356,7 @@ class StokOpnameController extends Controller
                             'updated_at' => now(),
                         ]);
 
-                        $item->barang_masuk_id = $barangMasuk->id;
+                        $item->barang_masuk_id = $barangMasuk->id_barang_masuk;
                         $barang->increment('stok', $jumlahSisaBaru);
                     }
                 }
@@ -371,6 +375,66 @@ class StokOpnameController extends Controller
                 'cabang_id' => $validated['cabang_id'],
             ])
             ->with('success', 'Input malam berhasil disimpan. Barang sisa sudah otomatis tercatat sebagai barang masuk.');
+    }
+
+    /**
+     * Simpan cabang baru dari halaman stok opname (karyawan).
+     */
+    public function storeCabang(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nama_cabang' => ['required', 'string', 'max:120', 'unique:cabangs,nama_cabang'],
+            'alamat' => ['nullable', 'string', 'max:255'],
+            'aktif' => ['nullable', 'boolean'],
+        ]);
+
+        $namaCabang = $this->withCabangPrefix($validated['nama_cabang']);
+        $kodeCabang = $this->generateCabangKode($namaCabang);
+
+        Cabang::create([
+            'nama_cabang' => $namaCabang,
+            'kode_cabang' => $kodeCabang,
+            'alamat' => $validated['alamat'] ?? null,
+            'aktif' => (bool) ($validated['aktif'] ?? true),
+        ]);
+
+        return redirect()
+            ->route('stok-opname.index', ['tanggal' => $request->query('tanggal')])
+            ->with('success', 'Cabang baru berhasil ditambahkan.');
+    }
+
+    /**
+     * Nonaktifkan cabang dari halaman stok opname (karyawan).
+     */
+    public function deactivateCabang(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'cabang_id' => ['required', 'exists:cabangs,id_cabang'],
+        ]);
+
+        Cabang::where('id_cabang', $validated['cabang_id'])
+            ->update(['aktif' => false]);
+
+        return redirect()
+            ->route('stok-opname.index', ['tanggal' => $request->query('tanggal')])
+            ->with('success', 'Cabang berhasil dinonaktifkan.');
+    }
+
+    /**
+     * Aktifkan kembali cabang dari halaman stok opname (karyawan).
+     */
+    public function activateCabang(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'cabang_id' => ['required', 'exists:cabangs,id_cabang'],
+        ]);
+
+        Cabang::where('id_cabang', $validated['cabang_id'])
+            ->update(['aktif' => true]);
+
+        return redirect()
+            ->route('stok-opname.index', ['tanggal' => $request->query('tanggal')])
+            ->with('success', 'Cabang berhasil diaktifkan kembali.');
     }
 
     /**
@@ -535,6 +599,57 @@ class StokOpnameController extends Controller
         }
 
         return 'data:image/png;base64,'.base64_encode($logoContents);
+    }
+
+    private function generateCabangKode(string $namaCabang): string
+    {
+        $parts = preg_split('/\s+/', trim($namaCabang));
+        $initials = collect($parts)
+            ->filter()
+            ->map(function ($part) {
+                return Str::upper(Str::substr(preg_replace('/[^a-zA-Z0-9]/', '', $part), 0, 1));
+            })
+            ->implode('');
+
+        if ($initials === '') {
+            $initials = 'CB';
+        }
+
+        $initials = Str::upper(Str::substr($initials, 0, 3));
+
+        $attempts = 0;
+        do {
+            $attempts++;
+            $kode = $initials.'-'.str_pad((string) random_int(1, 999), 3, '0', STR_PAD_LEFT);
+            $exists = Cabang::where('kode_cabang', $kode)->exists();
+        } while ($exists && $attempts < 10);
+
+        return $kode;
+    }
+
+    private function withCabangPrefix(string $namaCabang): string
+    {
+        $cleanName = trim($namaCabang);
+        if (Str::startsWith(Str::lower($cleanName), 'cab ')) {
+            return $cleanName;
+        }
+
+        $maxNumber = Cabang::query()
+            ->where('nama_cabang', 'like', 'Cab %')
+            ->get()
+            ->map(function (Cabang $cabang) {
+                if (preg_match('/^cab\s+(\d+)/i', $cabang->nama_cabang, $matches)) {
+                    return (int) $matches[1];
+                }
+
+                return null;
+            })
+            ->filter()
+            ->max();
+
+        $nextNumber = (int) ($maxNumber ?? 0) + 1;
+
+        return 'Cab '.$nextNumber.' '.$cleanName;
     }
 
     private function findOrCreateHeader(string $tanggal, int $cabangId): CabangDistribusi

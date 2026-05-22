@@ -165,15 +165,15 @@ class DashboardController extends Controller
     private function getRecentActivities()
     {
         $masuk = DB::table('barang_masuk')
-            ->join('users', 'users.id', '=', 'barang_masuk.user_id')
-            ->join('barang', 'barang.id', '=', 'barang_masuk.barang_id')
+            ->join('users', 'users.id_user', '=', 'barang_masuk.user_id')
+            ->join('barang', 'barang.id_barang', '=', 'barang_masuk.barang_id')
             ->where('users.role', 'karyawan')
             ->whereNull('barang_masuk.deleted_at')
             ->selectRaw("'masuk' as tipe, users.name as penginput, barang.nama_barang, barang_masuk.jumlah, barang_masuk.created_at");
 
         return DB::table('barang_keluar')
-            ->join('users', 'users.id', '=', 'barang_keluar.user_id')
-            ->join('barang', 'barang.id', '=', 'barang_keluar.barang_id')
+            ->join('users', 'users.id_user', '=', 'barang_keluar.user_id')
+            ->join('barang', 'barang.id_barang', '=', 'barang_keluar.barang_id')
             ->where('users.role', 'karyawan')
             ->whereNull('barang_keluar.deleted_at')
             ->selectRaw("'keluar' as tipe, users.name as penginput, barang.nama_barang, barang_keluar.jumlah, barang_keluar.created_at")
