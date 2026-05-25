@@ -39,7 +39,7 @@ class BarangMasukController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'barang_id' => 'required|exists:barang,id',
+            'barang_id' => 'required|exists:barang,id_barang',
             'jumlah' => 'required|integer|min:1',
             'tanggal' => 'required|date',
         ]);
@@ -95,7 +95,7 @@ class BarangMasukController extends Controller
         }
 
         $validated = $request->validate([
-            'barang_id' => 'required|exists:barang,id',
+            'barang_id' => 'required|exists:barang,id_barang',
             'jumlah' => 'required|integer|min:1',
             'tanggal' => 'required|date',
         ]);

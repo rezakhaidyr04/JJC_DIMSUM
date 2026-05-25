@@ -33,7 +33,7 @@ class CabangDistribusiItem extends Model
 
     public function barang(): BelongsTo
     {
-        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
+        return $this->belongsTo(Barang::class, 'barang_id');
     }
 
     public function barangKeluar(): BelongsTo

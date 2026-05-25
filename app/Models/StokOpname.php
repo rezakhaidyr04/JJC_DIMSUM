@@ -32,11 +32,11 @@ class StokOpname extends Model
 
     public function barang(): BelongsTo
     {
-        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
+        return $this->belongsTo(Barang::class, 'barang_id');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id_user');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

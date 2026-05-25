@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Schema;
 
 class BarangKeluar extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static ?string $resolvedPrimaryKey = null;
 
     protected $table = 'barang_keluar';
 
@@ -46,12 +49,23 @@ class BarangKeluar extends Model
         'deleted_at' => 'datetime',
     ];
 
+    public function getKeyName(): string
+    {
+        if (static::$resolvedPrimaryKey !== null) {
+            return static::$resolvedPrimaryKey;
+        }
+
+        static::$resolvedPrimaryKey = Schema::hasColumn($this->getTable(), 'id_barang_keluar') ? 'id_barang_keluar' : 'id';
+
+        return static::$resolvedPrimaryKey;
+    }
+
     /**
      * Get the barang that this entry belongs to
      */
     public function barang(): BelongsTo
     {
-        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
+        return $this->belongsTo(Barang::class, 'barang_id');
     }
 
     /**
@@ -83,7 +97,7 @@ class BarangKeluar extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id_user');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -91,7 +105,7 @@ class BarangKeluar extends Model
      */
     public function voidRequester(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'void_requested_by', 'id_user');
+        return $this->belongsTo(User::class, 'void_requested_by');
     }
 
     /**
@@ -99,6 +113,6 @@ class BarangKeluar extends Model
      */
     public function voidApprover(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'void_approved_by', 'id_user');
+        return $this->belongsTo(User::class, 'void_approved_by');
     }
 }

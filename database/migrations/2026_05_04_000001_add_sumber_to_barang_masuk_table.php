@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('barang_masuk', function (Blueprint $table) {
-            $table->string('sumber', 30)->default('manual')->after('tanggal_masuk');
-        });
+        if (! Schema::hasColumn('barang_masuk', 'sumber')) {
+            Schema::table('barang_masuk', function (Blueprint $table) {
+                $table->string('sumber', 30)->default('manual')->after('tanggal_masuk');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('barang_masuk', function (Blueprint $table) {
-            $table->dropColumn('sumber');
-        });
+        if (Schema::hasColumn('barang_masuk', 'sumber')) {
+            Schema::table('barang_masuk', function (Blueprint $table) {
+                $table->dropColumn('sumber');
+            });
+        }
     }
 };

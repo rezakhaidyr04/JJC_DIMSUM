@@ -7,11 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected static ?string $resolvedPrimaryKey = null;
 
     protected $primaryKey = 'id_user';
 
@@ -52,6 +55,17 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function getKeyName(): string
+    {
+        if (static::$resolvedPrimaryKey !== null) {
+            return static::$resolvedPrimaryKey;
+        }
+
+        static::$resolvedPrimaryKey = Schema::hasColumn($this->getTable(), 'id_user') ? 'id_user' : 'id';
+
+        return static::$resolvedPrimaryKey;
+    }
+
     public function isOwner(): bool
     {
         return $this->role === 'owner';
@@ -64,6 +78,6 @@ class User extends Authenticatable
 
     public function cabangDistribusis(): HasMany
     {
-        return $this->hasMany(CabangDistribusi::class, 'user_id', 'id_user');
+        return $this->hasMany(CabangDistribusi::class, 'user_id', $this->getKeyName());
     }
 }

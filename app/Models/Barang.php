@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Schema;
 
 class Barang extends Model
 {
     use HasFactory;
+
+    protected static ?string $resolvedPrimaryKey = null;
 
     protected $table = 'barang';
 
@@ -26,6 +29,17 @@ class Barang extends Model
         'status',
         'stok',
     ];
+
+    public function getKeyName(): string
+    {
+        if (static::$resolvedPrimaryKey !== null) {
+            return static::$resolvedPrimaryKey;
+        }
+
+        static::$resolvedPrimaryKey = Schema::hasColumn($this->getTable(), 'id_barang') ? 'id_barang' : 'id';
+
+        return static::$resolvedPrimaryKey;
+    }
 
     protected static function booted()
     {
@@ -69,7 +83,7 @@ class Barang extends Model
      */
     public function barangMasuk(): HasMany
     {
-        return $this->hasMany(BarangMasuk::class, 'barang_id', 'id_barang');
+        return $this->hasMany(BarangMasuk::class, 'barang_id', $this->getKeyName());
     }
 
     /**
@@ -77,7 +91,7 @@ class Barang extends Model
      */
     public function barangKeluar(): HasMany
     {
-        return $this->hasMany(BarangKeluar::class, 'barang_id', 'id_barang');
+        return $this->hasMany(BarangKeluar::class, 'barang_id', $this->getKeyName());
     }
 
     /**
@@ -85,7 +99,7 @@ class Barang extends Model
      */
     public function cabangDistribusiItems(): HasMany
     {
-        return $this->hasMany(CabangDistribusiItem::class, 'barang_id', 'id_barang');
+        return $this->hasMany(CabangDistribusiItem::class, 'barang_id', $this->getKeyName());
     }
 
     /**
@@ -155,7 +169,7 @@ class Barang extends Model
     {
         return self::lowStock($threshold)->get()->map(function ($barang) {
             return [
-                'id' => $barang->id,
+                'id' => $barang->getKey(),
                 'nama_barang' => $barang->nama_barang,
                 'stok' => $barang->stok,
                 'status' => $barang->stok == 0 ? 'habis' : 'hampir_habis',

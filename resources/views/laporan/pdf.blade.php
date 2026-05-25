@@ -602,12 +602,13 @@
                                 </td>
 
                                 @foreach($chunkHeaders as $cabang)
-                                    @php
-                                        $cabangData = data_get($barang['per_cabang_map'] ?? [], $cabang['cabang_id']);
-                                    @endphp
-                                    <td class="{{ $cabangData ? '' : 'cabang-blank' }}">{{ $cabangData['jumlah_bawa'] ?? '-' }}</td>
-                                    <td class="{{ $cabangData ? '' : 'cabang-blank' }}">{{ $cabangData['jumlah_sisa'] ?? '-' }}</td>
-                                    <td class="mutasi-terpakai {{ $cabangData ? '' : 'cabang-blank' }}">{{ $cabangData['jumlah_terpakai'] ?? '-' }}</td>
+                                        @php
+                                            $key = isset($cabang['cabang_id']) ? (string) $cabang['cabang_id'] : null;
+                                            $cabangData = $key !== null ? collect($barang['per_cabang_map'] ?? [])->get($key) : null;
+                                        @endphp
+                                        <td class="{{ $cabangData ? '' : 'cabang-blank' }}">{{ $cabangData['jumlah_bawa'] ?? '-' }}</td>
+                                        <td class="{{ $cabangData ? '' : 'cabang-blank' }}">{{ $cabangData['jumlah_sisa'] ?? '-' }}</td>
+                                        <td class="mutasi-terpakai {{ $cabangData ? '' : 'cabang-blank' }}">{{ $cabangData['jumlah_terpakai'] ?? '-' }}</td>
                                 @endforeach
 
                                 <td class="mutasi-total">{{ $barang['total_bawa'] ?? 0 }}</td>

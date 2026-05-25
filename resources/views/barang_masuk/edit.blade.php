@@ -20,7 +20,7 @@
                             <select class="form-select @error('barang_id') is-invalid @enderror" id="barang_id" name="barang_id" required>
                                 <option value="">-- Pilih Barang --</option>
                                 @foreach($barang as $item)
-                                    <option value="{{ $item->id }}" {{ old('barang_id', $barangMasuk->barang_id) == $item->id ? 'selected' : '' }}>
+                                    <option value="{{ $item->getKey() }}" {{ old('barang_id', $barangMasuk->barang_id) == $item->getKey() ? 'selected' : '' }}>
                                         {{ $item->nama_barang }} (Stok: {{ $item->stok }})
                                     </option>
                                 @endforeach
