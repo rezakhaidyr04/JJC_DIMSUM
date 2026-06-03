@@ -36,7 +36,7 @@
                                         <td>{{ $item->void_reason }}</td>
                                         <td class="text-center">{{ optional($item->void_requested_at)->format('d M Y H:i') }} WIB</td>
                                         <td class="text-center">
-                                            <form method="POST" action="{{ route('barang-masuk.approve-void', $item->id) }}">
+                                            <form method="POST" action="{{ route('barang-masuk.approve-void', $item->getKey()) }}">
                                                 @csrf
                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Setujui void dan hapus transaksi ini?')">
                                                     <i class="fas fa-check"></i> Approve
