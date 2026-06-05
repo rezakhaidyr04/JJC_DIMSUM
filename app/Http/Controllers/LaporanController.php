@@ -60,6 +60,72 @@ class LaporanController extends Controller
         ]);
     }
 
+    /**
+     * Laporan ringkas per cabang (karyawan).
+     */
+    public function cabangIndex(Request $request): View
+    {
+        $validated = $request->validate([
+            'tanggal_mulai' => ['nullable', 'date'],
+            'tanggal_selesai' => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
+            'cabang_id' => ['nullable', 'exists:cabangs,id_cabang'],
+        ]);
+
+        $tanggalMulai = $validated['tanggal_mulai'] ?? null;
+        $tanggalSelesai = $validated['tanggal_selesai'] ?? null;
+        $cabangId = $validated['cabang_id'] ?? null;
+
+        $query = CabangDistribusi::with(['cabang', 'items'])
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id_cabang_distribusi');
+
+        if ($tanggalMulai && $tanggalSelesai) {
+            $query->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai]);
+        } elseif ($tanggalMulai) {
+            $query->whereDate('tanggal', '>=', $tanggalMulai);
+        } elseif ($tanggalSelesai) {
+            $query->whereDate('tanggal', '<=', $tanggalSelesai);
+        }
+
+        if ($cabangId) {
+            $query->where('cabang_id', $cabangId);
+        }
+
+        $records = $query->get()->map(function (CabangDistribusi $record) {
+            $items = $record->items;
+
+            return [
+                'tanggal' => $record->tanggal ? Carbon::parse($record->tanggal)->format('d M Y') : '-',
+                'cabang' => $record->cabang?->nama_cabang ?? '-',
+                'total_bawa' => (int) $items->sum('jumlah_bawa'),
+                'total_sisa' => (int) $items->sum('jumlah_sisa'),
+                'total_terpakai' => (int) $items->sum('jumlah_terpakai'),
+                'catatan' => $record->catatan ?: '-',
+            ];
+        });
+
+        $totalRecords = $records->count();
+        $totalCabang = $records->pluck('cabang')->unique()->filter()->count();
+        $totalBawa = (int) $records->sum('total_bawa');
+        $totalSisa = (int) $records->sum('total_sisa');
+        $totalTerpakai = (int) $records->sum('total_terpakai');
+
+        $cabangList = Cabang::where('aktif', true)->orderBy('nama_cabang')->get();
+
+        return view('laporan_cabang.index', [
+            'records' => $records,
+            'cabangList' => $cabangList,
+            'tanggalMulai' => $tanggalMulai,
+            'tanggalSelesai' => $tanggalSelesai,
+            'selectedCabang' => $cabangId,
+            'totalRecords' => $totalRecords,
+            'totalCabang' => $totalCabang,
+            'totalBawa' => $totalBawa,
+            'totalSisa' => $totalSisa,
+            'totalTerpakai' => $totalTerpakai,
+        ]);
+    }
+
     private function getLogoBase64(): ?string
     {
         $logoPath = public_path('images/logo-login.png');
@@ -292,7 +358,7 @@ class LaporanController extends Controller
             ->values()
             ->map(function (Cabang $cabang) {
                 return [
-                    'cabang_id' => $cabang->id,
+                    'cabang_id' => $cabang->id_cabang,
                     'kode_cabang' => $cabang->kode_cabang ?: '-',
                     'nama_cabang' => $cabang->nama_cabang ?: '-',
                 ];

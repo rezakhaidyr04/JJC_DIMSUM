@@ -73,6 +73,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/stok-opname-harian/cabang/aktif', [StokOpnameController::class, 'activateCabang'])->name('stok-opname.cabang.activate');
         // Page per cabang: shows input pagi + input malam for a selected cabang
         Route::get('/stok-opname-harian/cabang/{cabang}', [StokOpnameController::class, 'showCabang'])->name('stok-opname.cabang');
+
+        Route::get('/laporan-cabang', [LaporanController::class, 'cabangIndex'])->name('laporan-cabang.index');
     });
 
     // Laporan

@@ -850,6 +850,12 @@
 
                     @if(auth()->user()?->isKaryawan())
                         <li class="nav-item">
+                            <a href="{{ route('laporan-cabang.index') }}" class="nav-link {{ request()->routeIs('laporan-cabang.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-clipboard-list"></i>
+                                <p>Laporan Cabang</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('stok-opname.index') }}" class="nav-link {{ request()->routeIs('stok-opname.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-clipboard-check"></i>
                                 <p>Stok Opname Harian</p>

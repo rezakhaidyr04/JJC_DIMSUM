@@ -25,9 +25,6 @@
                 <div class="card-header">
                     <h3 class="card-title">Laporan Stok Barang</h3>
                     <div class="card-tools">
-                        <a href="{{ route('laporan.index', array_filter(['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'export' => 'excel'])) }}" class="btn btn-success btn-sm">
-                            <i class="fas fa-file-excel"></i> Export Excel
-                        </a>
                         <a href="{{ route('laporan.index', array_filter(['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'export' => 'pdf'])) }}" class="btn btn-danger btn-sm">
                             <i class="fas fa-file-pdf"></i> Export PDF
                         </a>
@@ -119,7 +116,7 @@
                                         <td class="text-center"><span class="badge laporan-badge laporan-badge--muted">{{ $item['total_barang_masuk'] }}</span></td>
                                         <td class="text-center"><span class="badge laporan-badge laporan-badge--akhir">{{ $item['saldo_harian'] }}</span></td>
                                         <td class="text-center"><span class="badge laporan-badge laporan-badge--muted">{{ $item['stok_real_saat_ini'] }}</span></td>
-                                        <td class="detail-cabang-cell">{{ $item['detail_cabang'] }}</td>
+                                        <td class="detail-cabang-cell">{!! nl2br(e($item['detail_cabang'])) !!}</td>
                                     </tr>
                                     @if(!empty($item['detail_barang']))
                                         @foreach($item['detail_barang'] as $barang)
@@ -135,14 +132,16 @@
                                                                         <span class="cabang-detail">keluar {{ $cabang['jumlah_bawa'] }}, kembali {{ $cabang['jumlah_sisa'] }}, terpakai {{ $cabang['jumlah_terpakai'] }}</span>
                                                                     </div>
                                                                 @endforeach
-                                            <div class="barang-summary">
-                                                <strong>Total:</strong> keluar {{ $barang['total_bawa'] }}, kembali {{ $barang['total_sisa'] }}, terpakai {{ $barang['total_terpakai'] }}, masuk {{ $barang['barang_masuk'] }}
-                                            </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                                            @else
+                                                                <div class="text-muted">Tidak ada data cabang.</div>
+                                                            @endif
+                                                            <div class="barang-summary">
+                                                                <strong>Total:</strong> keluar {{ $barang['total_bawa'] }}, kembali {{ $barang['total_sisa'] }}, terpakai {{ $barang['total_terpakai'] }}, masuk {{ $barang['barang_masuk'] }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
                         @endforeach
                     @endif
                 @endforeach
