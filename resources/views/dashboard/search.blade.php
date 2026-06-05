@@ -192,7 +192,7 @@
                         <div class="result-card__head d-flex flex-wrap justify-content-between align-items-center gap-2">
                             <div>
                                 <h3 class="result-card__title mb-0">
-                                    <a href="{{ route('barang.show', $barang->id) }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                    <a href="{{ route('barang.show', $barang->getKey()) }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
                                         {{ $barang->nama_barang }}
                                     </a>
                                     <small class="text-muted">({{ $barang->kode_barang }})</small>
@@ -200,7 +200,7 @@
                                 <div class="text-muted mt-1">Satuan: {{ $barang->satuan ?? '-' }} | Stok minimal: {{ $barang->stok_min ?? 5 }} | Status: {{ $barang->status ?? 'unknown' }}</div>
                             </div>
                             <div class="result-actions">
-                                <a href="{{ route('barang.show', $barang->id) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                                <a href="{{ route('barang.show', $barang->getKey()) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
                                     <i class="fas fa-up-right-from-square me-1"></i> Buka Detail
                                 </a>
                             </div>

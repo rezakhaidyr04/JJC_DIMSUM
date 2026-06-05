@@ -54,13 +54,14 @@ class DashboardController extends Controller
             $matchedCount = $barangs->count();
 
             foreach ($barangs as $barang) {
-                $perCabang = $this->getPerCabangBreakdown($barang->id);
+                $barangId = (int) $barang->getKey();
+                $perCabang = $this->getPerCabangBreakdown($barangId);
 
                 $results->push([
                     'barang' => $barang,
-                    'total_masuk' => (int) BarangMasuk::where('barang_id', $barang->id)->sum('jumlah'),
-                    'total_keluar' => (int) BarangKeluar::where('barang_id', $barang->id)->sum('jumlah'),
-                    'stok_opname' => (int) \App\Models\StokOpname::where('barang_id', $barang->id)->sum('jumlah_fisik'),
+                    'total_masuk' => (int) BarangMasuk::where('barang_id', $barangId)->sum('jumlah'),
+                    'total_keluar' => (int) BarangKeluar::where('barang_id', $barangId)->sum('jumlah'),
+                    'stok_opname' => (int) \App\Models\StokOpname::where('barang_id', $barangId)->sum('jumlah_fisik'),
                     'per_cabang' => $perCabang,
                 ]);
             }
