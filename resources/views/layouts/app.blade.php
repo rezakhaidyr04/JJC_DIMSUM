@@ -841,6 +841,21 @@
                         </li>
 
                         <li class="nav-item">
+                            <a href="{{ route('barang-delete-requests.index') }}" class="nav-link {{ request()->routeIs('barang-delete-requests.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-trash"></i>
+                                <p>
+                                    Approval Hapus
+                                    @php
+                                        $pendingDeleteRequests = \App\Models\BarangDeleteRequest::where('status', 'pending')->count();
+                                    @endphp
+                                    @if($pendingDeleteRequests > 0)
+                                        <span class="badge badge-warning right">{{ $pendingDeleteRequests }}</span>
+                                    @endif
+                                </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a href="{{ route('stok-opname.rekap') }}" class="nav-link {{ request()->routeIs('stok-opname.rekap') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-chart-pie"></i>
                                 <p>Rekap Cabang Harian</p>

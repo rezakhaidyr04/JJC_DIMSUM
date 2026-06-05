@@ -54,6 +54,11 @@ Route::middleware('auth')->group(function () {
 
         Route::post('barang-masuk/{barangMasuk}/approve-void', [BarangMasukController::class, 'approveVoid'])->name('barang-masuk.approve-void');
         Route::post('barang-keluar/{barangKeluar}/approve-void', [BarangKeluarController::class, 'approveVoid'])->name('barang-keluar.approve-void');
+
+        // Manage delete requests
+        Route::get('/barang-delete-requests', [\App\Http\Controllers\BarangDeleteRequestController::class, 'index'])->name('barang-delete-requests.index');
+        Route::post('/barang-delete-requests/{deleteRequest}/approve', [\App\Http\Controllers\BarangDeleteRequestController::class, 'approve'])->name('barang-delete-requests.approve');
+        Route::post('/barang-delete-requests/{deleteRequest}/reject', [\App\Http\Controllers\BarangDeleteRequestController::class, 'reject'])->name('barang-delete-requests.reject');
     });
 
     // Insert-only access for karyawan
@@ -64,6 +69,9 @@ Route::middleware('auth')->group(function () {
 
         Route::post('barang-masuk/{barangMasuk}/request-void', [BarangMasukController::class, 'requestVoid'])->name('barang-masuk.request-void');
         Route::post('barang-keluar/{barangKeluar}/request-void', [BarangKeluarController::class, 'requestVoid'])->name('barang-keluar.request-void');
+
+        // Karyawan: submit delete request for a barang
+        Route::post('/barang/{barang}/request-delete', [\App\Http\Controllers\BarangDeleteRequestController::class, 'store'])->name('barang.request-delete');
 
         Route::get('/stok-opname-harian', [StokOpnameController::class, 'index'])->name('stok-opname.index');
         Route::post('/stok-opname-harian/pagi', [StokOpnameController::class, 'storeBerangkat'])->name('stok-opname.store-berangkat');

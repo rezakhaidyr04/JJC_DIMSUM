@@ -6,6 +6,48 @@
 @section('content')
     @push('styles')
     <style>
+        /* Styles for delete request input group to keep compact */
+        .delete-request-input .input-group .form-control {
+            height: calc(1.6rem + 0.6rem);
+            padding: 0.35rem 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .delete-request-input .input-group .btn {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.85rem;
+        }
+
+        .delete-request-panel {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.65rem;
+            border: 1px solid rgba(198, 40, 51, 0.14);
+            border-radius: 0.8rem;
+            background: #fff7f7;
+        }
+
+        .delete-request-panel.is-open {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .delete-request-panel textarea {
+            resize: none;
+            min-height: 72px;
+            font-size: 0.85rem;
+        }
+
+        .delete-request-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        /* Make table action cell vertically centered */
+        .barang-table .table td { vertical-align: middle; }
+
         :root {
             --primary-red: #c62833;
             --red-light: #cf202c;
@@ -433,7 +475,7 @@
                                 <th>Stok Minimal</th>
                                 <th>Status</th>
                                 <th style="width: 12%">Stok</th>
-                                @if(Auth::user()->isOwner())
+                                @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
                                     <th style="width: 18%">Aksi</th>
                                 @endif
                             </tr>
@@ -469,6 +511,35 @@
                                                 </div>
                                             </td>
                                         @endif
+                                        @if(Auth::user()->isKaryawan())
+                                            <td>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-danger btn-sm w-100"
+                                                    onclick="toggleDeleteRequest({{ $item->getKey() }})"
+                                                >
+                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                </button>
+
+                                                <form method="POST" action="{{ route('barang.request-delete', $item->getKey()) }}" class="delete-request-panel" id="delete-request-panel-{{ $item->getKey() }}">
+                                                    @csrf
+                                                    <textarea
+                                                        name="reason"
+                                                        class="form-control form-control-sm"
+                                                        placeholder="Tulis alasan penghapusan barang ini"
+                                                        required
+                                                    ></textarea>
+                                                    <div class="delete-request-actions">
+                                                        <button type="button" class="btn btn-light btn-sm" onclick="toggleDeleteRequest({{ $item->getKey() }})">
+                                                            Batal
+                                                        </button>
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            Kirim Pengajuan
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             @else
@@ -489,3 +560,13 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    function toggleDeleteRequest(id) {
+        const panel = document.getElementById('delete-request-panel-' + id);
+        if (!panel) return;
+        panel.classList.toggle('is-open');
+    }
+</script>
+@endpush
