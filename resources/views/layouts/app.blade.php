@@ -834,17 +834,10 @@
 
                     @if(auth()->user()?->isOwner())
                         <li class="nav-item">
-                            <a href="{{ route('void-requests.index') }}" class="nav-link {{ request()->routeIs('void-requests.*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-user-shield"></i>
-                                <p>Approval Void</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('barang-delete-requests.index') }}" class="nav-link {{ request()->routeIs('barang-delete-requests.*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-trash"></i>
+                            <a href="{{ route('approvals.index') }}" class="nav-link {{ request()->routeIs('approvals.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-check-circle"></i>
                                 <p>
-                                    Approval Hapus
+                                    Approvals
                                     @php
                                         $pendingDeleteRequests = \App\Models\BarangDeleteRequest::where('status', 'pending')->count();
                                     @endphp

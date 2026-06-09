@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\VoidRequestController;
+use App\Http\Controllers\ApprovalController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('barang-masuk', BarangMasukController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::resource('barang-keluar', BarangKeluarController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::get('/void-requests', [VoidRequestController::class, 'index'])->name('void-requests.index');
+        Route::get('/approvals', [ApprovalController::class, 'index'])->name('approvals.index');
         Route::get('/stok-opname-harian/rekap', [StokOpnameController::class, 'rekap'])->name('stok-opname.rekap');
         Route::get('/stok-opname-harian/rekap/pdf', [StokOpnameController::class, 'exportPdf'])->name('stok-opname.export-pdf');
 

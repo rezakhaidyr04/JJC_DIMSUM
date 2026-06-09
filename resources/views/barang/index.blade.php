@@ -475,9 +475,9 @@
                                 <th>Stok Minimal</th>
                                 <th>Status</th>
                                 <th style="width: 12%">Stok</th>
-                                @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
-                                    <th style="width: 18%">Aksi</th>
-                                @endif
+                                @if(Auth::user()->isKaryawan())
+                                            <th style="width: 18%">Aksi</th>
+                                        @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -493,24 +493,7 @@
                                         <td>
                                             <span class="badge barang-stok">{{ $item->stok }}</span>
                                         </td>
-                                        @if(Auth::user()->isOwner())
-                                            <td>
-                                                <div class="actions-inline">
-                                                    <a href="{{ route('barang.edit', $item->id_barang) }}" class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-edit" aria-hidden="true"></i>
-                                                        <span class="action-label">Edit</span>
-                                                    </a>
-                                                    <form method="POST" action="{{ route('barang.destroy', $item->id_barang) }}">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" aria-label="Hapus data barang">
-                                                            <i class="fas fa-trash" aria-hidden="true"></i>
-                                                            <span class="action-label">Hapus</span>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        @endif
+                                        {{-- Owner actions removed: owners no longer have Edit/Delete actions here --}}
                                         @if(Auth::user()->isKaryawan())
                                             <td>
                                                 <button
@@ -544,7 +527,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="{{ Auth::user()->isOwner() ? 8 : 7 }}" class="text-center text-muted">Tidak ada data</td>
+                                    <td colspan="{{ Auth::user()->isKaryawan() ? 8 : 7 }}" class="text-center text-muted">Tidak ada data</td>
                                 </tr>
                             @endif
                         </tbody>
