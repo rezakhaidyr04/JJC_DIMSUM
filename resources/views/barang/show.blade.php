@@ -35,7 +35,7 @@
                                         <th>Bawa</th>
                                         <th>Sisa</th>
                                         <th>Terpakai</th>
-                                        <th>Masuk</th>
+                                        <th>Restock Manual</th>
                                         <th>Keluar</th>
                                     </tr>
                                 </thead>

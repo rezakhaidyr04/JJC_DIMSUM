@@ -156,7 +156,7 @@
             <div>
                 <h2 class="search-hero__title">Hasil Pencarian: "{{ $query }}"</h2>
                 <div class="search-hero__meta">
-                    {{ $matchedCount }} barang ditemukan. Klik nama barang untuk membuka detail di tab baru.
+                    {{ $matchedCount }} barang ditemukan.
                 </div>
                 <div class="search-chip-row">
                     <span class="search-chip"><i class="fas fa-boxes"></i> Total Barang: {{ $totalBarang }}</span>
@@ -192,17 +192,10 @@
                         <div class="result-card__head d-flex flex-wrap justify-content-between align-items-center gap-2">
                             <div>
                                 <h3 class="result-card__title mb-0">
-                                    <a href="{{ route('barang.show', $barang->getKey()) }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
-                                        {{ $barang->nama_barang }}
-                                    </a>
+                                    {{ $barang->nama_barang }}
                                     <small class="text-muted">({{ $barang->kode_barang }})</small>
                                 </h3>
                                 <div class="text-muted mt-1">Satuan: {{ $barang->satuan ?? '-' }} | Stok minimal: {{ $barang->stok_min ?? 5 }} | Status: {{ $barang->status ?? 'unknown' }}</div>
-                            </div>
-                            <div class="result-actions">
-                                <a href="{{ route('barang.show', $barang->getKey()) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-up-right-from-square me-1"></i> Buka Detail
-                                </a>
                             </div>
                         </div>
 

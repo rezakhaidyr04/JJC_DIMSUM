@@ -15,7 +15,7 @@ class DashboardController extends Controller
     public function index(): View
     {
         $totalBarang = Barang::count();
-        $totalMasuk = BarangMasuk::sum('jumlah');
+        $totalMasuk = BarangMasuk::where('sumber', 'manual')->sum('jumlah');
         $totalKeluar = BarangKeluar::sum('jumlah');
         $totalStok = $this->getTotalStokAktual();
 
@@ -59,9 +59,9 @@ class DashboardController extends Controller
 
                 $results->push([
                     'barang' => $barang,
-                    'total_masuk' => (int) BarangMasuk::where('barang_id', $barangId)->sum('jumlah'),
+                    'total_masuk' => (int) BarangMasuk::where('barang_id', $barangId)->where('sumber', 'manual')->sum('jumlah'),
                     'total_keluar' => (int) BarangKeluar::where('barang_id', $barangId)->sum('jumlah'),
-                    'stok_opname' => (int) \App\Models\StokOpname::where('barang_id', $barangId)->sum('jumlah_fisik'),
+                    'stok_opname' => (int) $barang->stok,
                     'per_cabang' => $perCabang,
                 ]);
             }
@@ -73,7 +73,7 @@ class DashboardController extends Controller
     private function renderSearchResults(string $query, $results, int $matchedCount): View
     {
         $totalBarang = Barang::count();
-        $totalMasuk = BarangMasuk::sum('jumlah');
+        $totalMasuk = BarangMasuk::where('sumber', 'manual')->sum('jumlah');
         $totalKeluar = BarangKeluar::sum('jumlah');
         $totalStok = $this->getTotalStokAktual();
         $chartData = $this->getChartData();
@@ -104,26 +104,31 @@ class DashboardController extends Controller
         $cabangs = \App\Models\Cabang::all();
 
         return $cabangs->map(function ($cabang) use ($barangId) {
+            $cabangId = $cabang->getKey();
+            $restockManualTotal = (int) BarangMasuk::where('barang_id', $barangId)
+                ->where('sumber', 'manual')
+                ->sum('jumlah');
+
             $bawa = \App\Models\CabangDistribusiItem::where('barang_id', $barangId)
                 ->whereHas('distribusi', function ($q) use ($cabang) {
-                    $q->where('cabang_id', $cabang->id);
+                    $q->where('cabang_id', $cabang->getKey());
                 })->sum('jumlah_bawa');
 
             $sisa = \App\Models\CabangDistribusiItem::where('barang_id', $barangId)
                 ->whereHas('distribusi', function ($q) use ($cabang) {
-                    $q->where('cabang_id', $cabang->id);
+                    $q->where('cabang_id', $cabang->getKey());
                 })->sum('jumlah_sisa');
 
             $terpakai = \App\Models\CabangDistribusiItem::where('barang_id', $barangId)
                 ->whereHas('distribusi', function ($q) use ($cabang) {
-                    $q->where('cabang_id', $cabang->id);
+                    $q->where('cabang_id', $cabang->getKey());
                 })->sum('jumlah_terpakai');
 
-            $masukCabang = BarangMasuk::where('barang_id', $barangId)->where('cabang_id', $cabang->id)->sum('jumlah');
-            $keluarCabang = BarangKeluar::where('barang_id', $barangId)->where('cabang_id', $cabang->id)->sum('jumlah');
+            $masukCabang = $restockManualTotal;
+            $keluarCabang = (int) $terpakai;
 
             return [
-                'cabang_id' => $cabang->id,
+                'cabang_id' => $cabangId,
                 'nama_cabang' => $cabang->nama_cabang,
                 'jumlah_bawa' => (int) $bawa,
                 'jumlah_sisa' => (int) $sisa,
@@ -149,7 +154,7 @@ class DashboardController extends Controller
             $date = now()->subDays($i)->format('Y-m-d');
             $labels[] = now()->subDays($i)->format('d M');
 
-            $masuk = BarangMasuk::whereDate($tanggalMasukColumn, $date)->sum('jumlah');
+            $masuk = BarangMasuk::whereDate($tanggalMasukColumn, $date)->where('sumber', 'manual')->sum('jumlah');
             $keluar = BarangKeluar::whereDate($tanggalKeluarColumn, $date)->sum('jumlah');
 
             $masukData[] = $masuk;

@@ -54,33 +54,39 @@ class BarangController extends Controller
     public function show(Barang $barang): View
     {
         // compute totals and per-cabang breakdown for detail page
-        $totalMasuk = \App\Models\BarangMasuk::where('barang_id', $barang->id)->sum('jumlah');
-        $totalKeluar = \App\Models\BarangKeluar::where('barang_id', $barang->id)->sum('jumlah');
-        $stokOpname = \App\Models\StokOpname::where('barang_id', $barang->id)->sum('jumlah_fisik');
+        $barangId = $barang->getKey();
+        $totalMasuk = \App\Models\BarangMasuk::where('barang_id', $barangId)->where('sumber', 'manual')->sum('jumlah');
+        $totalKeluar = \App\Models\BarangKeluar::where('barang_id', $barangId)->sum('jumlah');
+        $stokOpname = \App\Models\StokOpname::where('barang_id', $barangId)->sum('jumlah_fisik');
 
         $cabangs = \App\Models\Cabang::all();
 
         $perCabang = $cabangs->map(function ($cabang) use ($barang) {
-            $bawa = \App\Models\CabangDistribusiItem::where('barang_id', $barang->id)
+            $cabangId = $cabang->getKey();
+            $restockManualTotal = (int) \App\Models\BarangMasuk::where('barang_id', $barang->getKey())
+                ->where('sumber', 'manual')
+                ->sum('jumlah');
+
+            $bawa = \App\Models\CabangDistribusiItem::where('barang_id', $barang->getKey())
                 ->whereHas('distribusi', function ($q) use ($cabang) {
-                    $q->where('cabang_id', $cabang->id);
+                    $q->where('cabang_id', $cabang->getKey());
                 })->sum('jumlah_bawa');
 
-            $sisa = \App\Models\CabangDistribusiItem::where('barang_id', $barang->id)
+            $sisa = \App\Models\CabangDistribusiItem::where('barang_id', $barang->getKey())
                 ->whereHas('distribusi', function ($q) use ($cabang) {
-                    $q->where('cabang_id', $cabang->id);
+                    $q->where('cabang_id', $cabang->getKey());
                 })->sum('jumlah_sisa');
 
-            $terpakai = \App\Models\CabangDistribusiItem::where('barang_id', $barang->id)
+            $terpakai = \App\Models\CabangDistribusiItem::where('barang_id', $barang->getKey())
                 ->whereHas('distribusi', function ($q) use ($cabang) {
-                    $q->where('cabang_id', $cabang->id);
+                    $q->where('cabang_id', $cabang->getKey());
                 })->sum('jumlah_terpakai');
 
-            $masukCabang = \App\Models\BarangMasuk::where('barang_id', $barang->id)->where('cabang_id', $cabang->id)->sum('jumlah');
-            $keluarCabang = \App\Models\BarangKeluar::where('barang_id', $barang->id)->where('cabang_id', $cabang->id)->sum('jumlah');
+            $masukCabang = $restockManualTotal;
+            $keluarCabang = (int) $terpakai;
 
             return [
-                'cabang_id' => $cabang->id,
+                'cabang_id' => $cabangId,
                 'nama_cabang' => $cabang->nama_cabang,
                 'jumlah_bawa' => (int) $bawa,
                 'jumlah_sisa' => (int) $sisa,
