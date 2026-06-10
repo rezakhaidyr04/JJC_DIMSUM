@@ -11,7 +11,7 @@
                     <h3 class="card-title">Form Edit Barang Masuk</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('barang-masuk.update', $barangMasuk->id) }}">
+                    <form method="POST" action="{{ route('barang-masuk.update', $barangMasuk->id_barang_masuk) }}">
                         @csrf
                         @method('PUT')
 
