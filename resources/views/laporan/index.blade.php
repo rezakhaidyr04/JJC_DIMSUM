@@ -19,7 +19,7 @@
         <p>Tanggal Cetak: {{ now()->format('d-m-Y H:i') }}</p>
     </div>
 
-    <div class="row">
+    <div class="row laporan-card-row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -183,6 +183,10 @@
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 1.2rem;
             margin-bottom: 1.6rem;
+        }
+
+        .laporan-card-row {
+            margin-top: 1rem;
         }
 
         .laporan-insight {

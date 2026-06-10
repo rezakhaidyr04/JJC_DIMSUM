@@ -34,6 +34,10 @@
         }
 
         /* Dashboard Container */
+        .dashboard-stat-row {
+            margin-top: 1rem;
+        }
+
         .row.g-3 {
             margin-bottom: 2rem;
         }
@@ -404,7 +408,7 @@
     </style>
     @endpush
 
-    <div class="row g-3">
+    <div class="row g-3 dashboard-stat-row">
         <div class="col-lg-3 col-md-6">
             <div class="dashboard-stat">
                 <div class="dashboard-stat__content">
