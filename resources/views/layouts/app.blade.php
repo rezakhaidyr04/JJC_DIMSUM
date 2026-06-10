@@ -73,6 +73,11 @@
             padding-right: 1rem;
         }
 
+        .content-header .container-fluid {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
         /* Navbar Styling */
         .main-header.navbar {
             background: linear-gradient(90deg, var(--accent-red) 0%, #B91720 100%);
@@ -338,6 +343,11 @@
             letter-spacing: -0.02em;
         }
 
+        .content .container-fluid > .card:first-child,
+        .content .container-fluid > .row:first-child:not(.dashboard-stat-row) {
+            margin-top: 1rem;
+        }
+
         .card-title {
             margin: 0;
         }
@@ -385,27 +395,35 @@
         .card {
             background: var(--surface-1);
             box-shadow: var(--shadow-soft);
-            border: 1px solid #edf0f5;
-            border-radius: 0.95rem;
+            border: 1px solid #e8edf3;
+            border-radius: 1rem;
+            overflow: hidden;
             border-top: 4px solid var(--accent-red);
-            transition: transform 0.22s ease, box-shadow 0.22s ease;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
         }
 
         .card:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow: var(--shadow-hover);
+            border-color: #d9e1ea;
         }
 
-        .card-header {
+        .card > .card-header:not([class*="bg-"]) {
             background: linear-gradient(90deg, var(--accent-red) 0%, #B91720 100%);
             color: white;
             border: none;
             font-weight: 600;
-            padding: 0.95rem 1.2rem;
+            padding: 1rem 1.25rem;
         }
 
-        .card-body {
-            padding: 1.2rem;
+        .card > .card-body {
+            padding: 1.25rem;
+        }
+
+        .card > .card-footer {
+            padding: 0.9rem 1.25rem;
+            background: rgba(249, 250, 251, 0.9);
+            border-top: 1px solid #edf0f4;
         }
 
         /* Alert Styling */
@@ -594,6 +612,11 @@
                 padding-right: 0.7rem;
             }
 
+            .content-header .container-fluid {
+                padding-left: 0.7rem;
+                padding-right: 0.7rem;
+            }
+
             .content-wrapper {
                 margin-top: 54px;
                 padding-bottom: 64px;
@@ -679,6 +702,21 @@
 
         @media (max-width: 480px) {
             .content .container-fluid {
+                padding-left: 0.55rem;
+                padding-right: 0.55rem;
+            }
+
+            .content .container-fluid > .card:first-child,
+            .content .container-fluid > .row:first-child:not(.dashboard-stat-row) {
+                margin-top: 0.85rem;
+            }
+
+            .content .container-fluid > .card:first-child,
+            .content .container-fluid > .row:first-child:not(.dashboard-stat-row) {
+                margin-top: 0.75rem;
+            }
+
+            .content-header .container-fluid {
                 padding-left: 0.55rem;
                 padding-right: 0.55rem;
             }
