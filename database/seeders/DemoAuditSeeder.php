@@ -18,7 +18,7 @@ class DemoAuditSeeder extends Seeder
     {
         $owner = User::where('role', 'owner')->first();
         $karyawan = User::where('role', 'karyawan')->first();
-        $barang = Barang::orderBy('id')->take(3)->get();
+        $barang = Barang::orderBy('id_barang')->take(3)->get();
 
         if (! $owner || ! $karyawan || $barang->isEmpty()) {
             return;
@@ -29,8 +29,8 @@ class DemoAuditSeeder extends Seeder
         foreach ($barang as $index => $item) {
             BarangMasuk::firstOrCreate(
                 [
-                    'barang_id' => $item->id,
-                    'user_id' => $karyawan->id,
+                    'barang_id' => $item->id_barang,
+                    'user_id' => $karyawan->id_user,
                     'tanggal_masuk' => $now->copy()->subDays(2 + $index)->toDateString(),
                     'jumlah' => 5 + $index,
                 ],
@@ -43,8 +43,8 @@ class DemoAuditSeeder extends Seeder
 
             BarangKeluar::firstOrCreate(
                 [
-                    'barang_id' => $item->id,
-                    'user_id' => $karyawan->id,
+                    'barang_id' => $item->id_barang,
+                    'user_id' => $karyawan->id_user,
                     'tanggal_keluar' => $now->copy()->subDays(1 + $index)->toDateString(),
                     'jumlah' => 2 + $index,
                 ],
@@ -57,8 +57,8 @@ class DemoAuditSeeder extends Seeder
 
             StokOpname::updateOrCreate(
                 [
-                    'barang_id' => $item->id,
-                    'user_id' => $karyawan->id,
+                    'barang_id' => $item->id_barang,
+                    'user_id' => $karyawan->id_user,
                     'tanggal' => $now->toDateString(),
                 ],
                 [
@@ -70,12 +70,12 @@ class DemoAuditSeeder extends Seeder
             );
         }
 
-        $pendingMasuk = BarangMasuk::where('user_id', $karyawan->id)->latest()->first();
+        $pendingMasuk = BarangMasuk::where('user_id', $karyawan->id_user)->latest()->first();
         if ($pendingMasuk && $pendingMasuk->void_status === 'none') {
             $pendingMasuk->update([
                 'void_status' => 'pending',
                 'void_reason' => 'Salah input jumlah saat pergantian shift.',
-                'void_requested_by' => $karyawan->id,
+                'void_requested_by' => $karyawan->id_user,
                 'void_requested_at' => $now->copy()->subHours(2),
                 'void_approved_by' => null,
                 'void_approved_at' => null,
