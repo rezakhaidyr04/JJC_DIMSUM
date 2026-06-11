@@ -50,10 +50,17 @@
             color: #fff;
             border-radius: 0.8rem;
             box-shadow: 0 8px 20px rgba(26, 166, 190, 0.18);
+            padding: 1.2rem !important;
+            margin-bottom: 1.5rem !important;
+            font-size: 0.95rem !important;
+            line-height: 1.5 !important;
+            display: block !important;
+            text-align: center !important;
         }
 
         .approvals-alert strong {
             color: #fff;
+            font-weight: 700 !important;
         }
 
         .approvals-table thead th {

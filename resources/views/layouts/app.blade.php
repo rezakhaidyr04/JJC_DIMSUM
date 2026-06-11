@@ -530,6 +530,20 @@
             border-radius: 999px;
         }
 
+        /* Badge Notification (Counter) - Circle */
+        .badge.badge-warning.right,
+        .nav-link .badge {
+            padding: 0 !important;
+            width: 26px;
+            height: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            line-height: 1;
+        }
+
         /* Pagination Styling */
         .pagination {
             gap: 0.35rem;
