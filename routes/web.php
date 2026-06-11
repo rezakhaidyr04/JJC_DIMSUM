@@ -68,7 +68,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('barang', BarangController::class)->only(['create', 'store']);
         Route::resource('barang-masuk', BarangMasukController::class)->only(['create', 'store']);
         Route::resource('barang-keluar', BarangKeluarController::class)->only(['create', 'store']);
-        Route::resource('approvals', ApprovalController::class);
 
         Route::post('barang-masuk/{barangMasuk}/request-void', [BarangMasukController::class, 'requestVoid'])->name('barang-masuk.request-void');
         Route::post('barang-keluar/{barangKeluar}/request-void', [BarangKeluarController::class, 'requestVoid'])->name('barang-keluar.request-void');
