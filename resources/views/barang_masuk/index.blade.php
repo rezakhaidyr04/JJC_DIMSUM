@@ -357,7 +357,7 @@
                                 <th>Penginput</th>
                                 <th style="width: 12%">Label</th>
                                 <th>Status Void</th>
-                                @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
+                                @if(Auth::user()->isKaryawan())
                                     <th style="width: 20%">Aksi</th>
                                 @endif
                             </tr>
@@ -399,45 +399,20 @@
                                                 <span class="badge bg-success">Normal</span>
                                             @endif
                                         </td>
-                                        @if(Auth::user()->isOwner() || Auth::user()->isKaryawan())
+                                        @if(Auth::user()->isKaryawan())
                                             <td>
                                                 <div class="actions-inline">
-                                                    @if(Auth::user()->isOwner())
-                                                        @if($item->void_status === 'pending')
-                                                            <form method="POST" action="{{ route('barang-masuk.approve-void', $item->getKey()) }}">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Setujui void dan hapus data ini?')">
-                                                                    <i class="fas fa-check"></i>
-                                                                    <span class="action-label">Approve Void</span>
-                                                                </button>
-                                                            </form>
-                                                        @else
-                                                            <a href="{{ route('barang-masuk.edit', $item->getKey()) }}" class="btn btn-warning btn-sm">
-                                                                <i class="fas fa-edit" aria-hidden="true"></i>
-                                                                <span class="action-label">Edit</span>
-                                                            </a>
-                                                            <form method="POST" action="{{ route('barang-masuk.destroy', $item->getKey()) }}">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus" aria-label="Hapus barang masuk">
-                                                                    <i class="fas fa-trash" aria-hidden="true"></i>
-                                                                    <span class="action-label">Hapus</span>
-                                                                </button>
-                                                            </form>
-                                                        @endif
-                                                    @elseif(Auth::user()->isKaryawan())
-                                                        @if($item->void_status === 'pending')
-                                                            <span class="badge bg-warning text-dark">Menunggu approval owner</span>
-                                                        @else
-                                                            <form method="POST" action="{{ route('barang-masuk.request-void', $item->getKey()) }}" class="void-request-form">
-                                                                @csrf
-                                                                <input type="hidden" name="void_reason" value="">
-                                                                <button type="button" class="btn btn-outline-danger btn-sm js-btn-void">
-                                                                    <i class="fas fa-ban"></i>
-                                                                    <span class="action-label">Request Void</span>
-                                                                </button>
-                                                            </form>
-                                                        @endif
+                                                    @if($item->void_status === 'pending')
+                                                        <span class="badge bg-warning text-dark">Menunggu approval owner</span>
+                                                    @else
+                                                        <form method="POST" action="{{ route('barang-masuk.request-void', $item->getKey()) }}" class="void-request-form">
+                                                            @csrf
+                                                            <input type="hidden" name="void_reason" value="">
+                                                            <button type="button" class="btn btn-outline-danger btn-sm js-btn-void">
+                                                                <i class="fas fa-ban"></i>
+                                                                <span class="action-label">Request Void</span>
+                                                            </button>
+                                                        </form>
                                                     @endif
                                                 </div>
                                                 @if($item->void_status === 'pending' && $item->void_reason)
@@ -449,7 +424,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="{{ Auth::user()->isOwner() || Auth::user()->isKaryawan() ? 7 : 6 }}" class="text-center text-muted">Tidak ada data</td>
+                                    <td colspan="{{ Auth::user()->isKaryawan() ? 7 : 6 }}" class="text-center text-muted">Tidak ada data</td>
                                 </tr>
                             @endif
                         </tbody>
