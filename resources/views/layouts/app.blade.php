@@ -986,6 +986,17 @@
             const body = document.body;
             const mobileQuery = window.matchMedia('(max-width: 991.98px)');
 
+            // Hide sidebar by default on page load
+            const initializeSidebar = () => {
+                if (mobileQuery.matches) {
+                    // On mobile: keep sidebar closed by default
+                    body.classList.remove('sidebar-open');
+                } else {
+                    // On desktop: hide sidebar by default (full-hide)
+                    body.classList.add('sidebar-full-hide');
+                }
+            };
+
             const updateToggleState = () => {
                 const sidebarVisible = mobileQuery.matches
                     ? body.classList.contains('sidebar-open')
@@ -1017,6 +1028,8 @@
                 updateToggleState();
             });
 
+            // Initialize sidebar as hidden by default
+            initializeSidebar();
             updateToggleState();
         });
     </script>
