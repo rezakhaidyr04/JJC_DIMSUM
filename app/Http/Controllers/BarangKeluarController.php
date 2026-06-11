@@ -101,13 +101,23 @@ class BarangKeluarController extends Controller
         $validated['tanggal_keluar'] = $validated['tanggal'];
         unset($validated['tanggal']);
 
-        // Calculate the difference in jumlah
-        $jumlahDiff = $validated['jumlah'] - $barangKeluar->jumlah;
+        $oldBarangId = $barangKeluar->barang_id;
+        $oldJumlah = $barangKeluar->jumlah;
+        $newBarangId = $validated['barang_id'];
+        $newJumlah = $validated['jumlah'];
 
-        // Update barang stok based on difference
-        if ($jumlahDiff != 0) {
-            $barang = Barang::find($barangKeluar->barang_id);
-            $barang->decrement('stok', $jumlahDiff);
+        if ($oldBarangId === $newBarangId) {
+            $jumlahDiff = $newJumlah - $oldJumlah;
+            if ($jumlahDiff !== 0) {
+                $barang = Barang::find($oldBarangId);
+                $barang->decrement('stok', $jumlahDiff);
+            }
+        } else {
+            $oldBarang = Barang::find($oldBarangId);
+            $newBarang = Barang::find($newBarangId);
+
+            $oldBarang->increment('stok', $oldJumlah);
+            $newBarang->decrement('stok', $newJumlah);
         }
 
         $barangKeluar->update($validated);

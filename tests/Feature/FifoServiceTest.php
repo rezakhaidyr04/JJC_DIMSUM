@@ -51,8 +51,8 @@ class FifoServiceTest extends TestCase
 
         $this->assertCount(2, $records);
 
-        $first = BarangKeluar::orderBy('id')->first();
-        $second = BarangKeluar::orderBy('id')->skip(1)->first();
+        $first = BarangKeluar::orderBy('id_barang_keluar')->first();
+        $second = BarangKeluar::orderBy('id_barang_keluar')->skip(1)->first();
 
         $this->assertSame($masukOld->id, $first->barang_masuk_id);
         $this->assertSame(5, $first->jumlah);
