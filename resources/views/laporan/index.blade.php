@@ -87,20 +87,20 @@
                         <span class="laporan-chip"><i class="fas fa-clock"></i> Sinkron: {{ now()->format('d M Y H:i') }} WIB</span>
                     </div>
 
-                    <div class="table-responsive laporan-table">
-                    <table class="table table-bordered table-striped table-hover table-sm mb-0">
+                    <div class="table-responsive laporan-table" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                    <table class="table table-bordered table-striped table-hover table-sm mb-0" style="min-width: 1500px; margin-bottom: 0;">
                         <thead>
                             <tr>
                                 <th style="width: 5%">No</th>
-                                <th style="width: 11%">Tanggal</th>
-                                <th style="width: 7%">Cabang</th>
-                                <th style="width: 10%">Keluar / Bawa</th>
-                                <th style="width: 10%">Kembali / Sisa</th>
-                                <th style="width: 9%">Terpakai</th>
-                                <th style="width: 10%">Barang Masuk</th>
-                                <th style="width: 11%">Saldo Harian</th>
-                                <th style="width: 11%">Stok Real</th>
-                                <th>Detail Cabang</th>
+                                <th style="width: 10%">Tanggal</th>
+                                <th style="width: 6%">Cabang</th>
+                                <th style="width: 9%">Keluar / Bawa</th>
+                                <th style="width: 9%">Kembali / Sisa</th>
+                                <th style="width: 8%">Terpakai</th>
+                                <th style="width: 9%">Barang Masuk</th>
+                                <th style="width: 10%">Saldo Harian</th>
+                                <th style="width: 10%">Stok Real</th>
+                                <th style="width: 18%; white-space: nowrap;">Detail Cabang</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -297,6 +297,8 @@
             border: none;
             box-shadow: var(--shadow-lg);
             background: #fff;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .laporan-table table {
