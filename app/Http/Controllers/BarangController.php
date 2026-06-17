@@ -35,13 +35,12 @@ class BarangController extends Controller
         $validated = $request->validate([
             'nama_barang' => 'required|string|unique:barang|max:255',
             'satuan' => 'nullable|string|max:50',
-            'stok_min' => 'nullable|integer|min:0',
         ]);
 
         Barang::create([
             'nama_barang' => $validated['nama_barang'],
             'satuan' => $validated['satuan'] ?? null,
-            'stok_min' => $validated['stok_min'] ?? 5,
+            'stok_min' => 5,
             'stok' => 0,
         ]);
 

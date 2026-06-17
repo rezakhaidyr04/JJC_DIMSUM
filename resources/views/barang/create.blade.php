@@ -38,16 +38,21 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="stok_min" class="form-label">Stok Minimal</label>
-                                <input type="number" id="stok_min" name="stok_min" min="0" class="form-control @error('stok_min') is-invalid @enderror" value="{{ old('stok_min', 5) }}">
-                                @error('stok_min')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <div class="form-text">Default: 5</div>
+                                <input type="number" id="stok_min" name="stok_min" min="0" class="form-control @error('stok_min') is-invalid @enderror" value="5" readonly>
+                                <div class="form-text">Nilai ini dikunci di 5 untuk menentukan status barang.</div>
                             </div>
                         </div>
 
-                        <div class="alert alert-info">
-                            Stok awal otomatis diset ke <strong>0</strong>. Anda cukup isi nama barang.
+                        <div class="alert alert-info mb-3">
+                            <strong>Catatan :</strong> Stok awal otomatis diset ke 0. Anda Cukup Isi Nama Barangnya Saja.
+                        </div>
+
+                        <div class="alert alert-warning mb-3">
+                            <strong>Catatan Stok Minimal :</strong> Stok minimal di gunakan untuk menentukan status barang sebagai berikut :
+                            <ol class="mb-0 mt-2 ps-3">
+                                <li>Jika stok barang di bawah 5 maka status barang akan menjadi <strong>LOW</strong></li>
+                                <li>Jika stok barang sama dengang atau lebih dari 5 maka status barang menjadi <strong>NORMAL</strong></li>
+                            </ol>
                         </div>
 
                         <div class="d-flex flex-wrap gap-2">
