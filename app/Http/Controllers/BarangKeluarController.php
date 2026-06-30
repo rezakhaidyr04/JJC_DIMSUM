@@ -44,6 +44,11 @@ class BarangKeluarController extends Controller
             'tanggal' => 'required|date',
         ]);
 
+        $barang = Barang::find($validated['barang_id']);
+        if ($validated['jumlah'] > $barang->stok) {
+            return back()->withErrors(['jumlah' => 'Jumlah barang keluar melebihi stok yang tersedia (' . $barang->stok . ').'])->withInput();
+        }
+
         $validated['tanggal_keluar'] = $validated['tanggal'];
         unset($validated['tanggal']);
 
@@ -108,6 +113,12 @@ class BarangKeluarController extends Controller
 
         if ($oldBarangId === $newBarangId) {
             $jumlahDiff = $newJumlah - $oldJumlah;
+            if ($jumlahDiff > 0) {
+                $barang = Barang::find($oldBarangId);
+                if ($jumlahDiff > $barang->stok) {
+                    return back()->withErrors(['jumlah' => 'Jumlah barang keluar melebihi stok yang tersedia (' . ($barang->stok + $oldJumlah) . ').'])->withInput();
+                }
+            }
             if ($jumlahDiff !== 0) {
                 $barang = Barang::find($oldBarangId);
                 $barang->decrement('stok', $jumlahDiff);
@@ -115,6 +126,10 @@ class BarangKeluarController extends Controller
         } else {
             $oldBarang = Barang::find($oldBarangId);
             $newBarang = Barang::find($newBarangId);
+
+            if ($newJumlah > $newBarang->stok) {
+                return back()->withErrors(['jumlah' => 'Jumlah barang keluar melebihi stok yang tersedia (' . $newBarang->stok . ').'])->withInput();
+            }
 
             $oldBarang->increment('stok', $oldJumlah);
             $newBarang->decrement('stok', $newJumlah);
