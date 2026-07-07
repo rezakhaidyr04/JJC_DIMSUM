@@ -343,18 +343,7 @@ class LaporanController extends Controller
             return $found;
         })->filter();
 
-        $otherCabangs = $cabangs->reject(function (Cabang $cabang) use ($preferredOrder) {
-            foreach ($preferredOrder as $preferredName) {
-                if (strcasecmp(trim($cabang->nama_cabang), trim($preferredName)) === 0) {
-                    return true;
-                }
-            }
-
-            return false;
-        })->values();
-
         return $orderedCabangs
-            ->concat($otherCabangs)
             ->values()
             ->map(function (Cabang $cabang) {
                 return [

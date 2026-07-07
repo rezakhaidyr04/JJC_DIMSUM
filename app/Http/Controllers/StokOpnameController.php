@@ -54,18 +54,8 @@ class StokOpnameController extends Controller
             ];
         });
 
-        // Tambahan: sertakan juga cabang lain yang ada di DB (di akhir)
-        $otherCabangs = $allCabangs->reject(function ($c) use ($preferredOrder) {
-            foreach ($preferredOrder as $p) {
-                if (strcasecmp(trim($c->nama_cabang), trim($p)) === 0) {
-                    return true;
-                }
-            }
-
-            return false;
-        })->values();
-
-        $cabangList = $orderedCabangs->pluck('model')->filter()->values()->concat($otherCabangs);
+        // Hanya tampilkan cabang yang masuk daftar prioritas user.
+        $cabangList = $orderedCabangs->pluck('model')->filter()->values();
 
         $selectedTanggal = old('tanggal', $request->query('tanggal', now()->toDateString()));
         $selectedCabang = old('cabang_id', $request->query('cabang_id'));
