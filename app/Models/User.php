@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -53,6 +54,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'registration_otp_expires_at' => 'datetime',
+        'registration_otp_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -75,6 +78,43 @@ class User extends Authenticatable
     public function isKaryawan(): bool
     {
         return $this->role === 'karyawan';
+    }
+
+    public function hasPendingRegistrationOtp(): bool
+    {
+        return filled($this->registration_otp_hash) && $this->registration_otp_verified_at === null;
+    }
+
+    public function registrationOtpMatches(string $otp): bool
+    {
+        if (! $this->hasPendingRegistrationOtp() || ! $this->registration_otp_expires_at) {
+            return false;
+        }
+
+        if ($this->registration_otp_expires_at->isPast()) {
+            return false;
+        }
+
+        return Hash::check($otp, $this->registration_otp_hash);
+    }
+
+    public function storeRegistrationOtp(string $otp, int $expiresInMinutes = 15): void
+    {
+        $this->forceFill([
+            'registration_otp_hash' => Hash::make($otp),
+            'registration_otp_expires_at' => now()->addMinutes($expiresInMinutes),
+            'registration_otp_verified_at' => null,
+        ])->save();
+    }
+
+    public function markRegistrationOtpAsVerified(): void
+    {
+        $this->forceFill([
+            'registration_otp_hash' => null,
+            'registration_otp_expires_at' => null,
+            'registration_otp_verified_at' => now(),
+            'email_verified_at' => now(),
+        ])->save();
     }
 
     public function cabangDistribusis(): HasMany

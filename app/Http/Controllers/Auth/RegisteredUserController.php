@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewAccountOwnerMail;
+use App\Mail\RegistrationOtpMail;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -40,10 +41,33 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        $otpCode = $this->generateOtpCode();
+        $user->storeRegistrationOtp($otpCode);
 
-        Auth::login($user);
+        Mail::to($user->email)->send(new RegistrationOtpMail($user, $otpCode));
+        $this->notifyOwners($user, $otpCode);
 
-        return redirect()->route('dashboard');
+        return redirect()
+            ->route('registration.verify.form', ['email' => $user->email])
+            ->with('status', 'Akun berhasil dibuat. Cek email Anda untuk kode OTP sebelum login.');
+    }
+
+    private function generateOtpCode(): string
+    {
+        return str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    }
+
+    private function notifyOwners(User $user, string $otpCode): void
+    {
+        $ownerEmails = User::query()
+            ->where('role', 'owner')
+            ->whereNotNull('email')
+            ->pluck('email')
+            ->filter()
+            ->values();
+
+        foreach ($ownerEmails as $ownerEmail) {
+            Mail::to($ownerEmail)->send(new NewAccountOwnerMail($user, $otpCode));
+        }
     }
 }

@@ -456,6 +456,12 @@
                 <!-- Auth Card -->
                 <div class="auth-card">
                     <div class="auth-body">
+                        @if (session('status'))
+                            <div class="alert alert-info">
+                                {{ session('status') }}
+                            </div>
+                        @endif
+
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <strong>Login gagal.</strong>

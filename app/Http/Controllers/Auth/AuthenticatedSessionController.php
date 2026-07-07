@@ -35,19 +35,23 @@ class AuthenticatedSessionController extends Controller
         $identifier = $data['identifier'];
         $password = $data['password'];
 
-        // If identifier looks like an email, try normal email login first
         if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
-            $credentials = ['email' => $identifier, 'password' => $password];
+            $user = User::where('email', $identifier)->first();
 
-            if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            if ($user && Hash::check($password, $user->password)) {
+                if ($user->hasPendingRegistrationOtp()) {
+                    return back()->withErrors([
+                        'identifier' => 'Akun belum diverifikasi. Silakan cek email OTP terlebih dahulu.',
+                    ])->onlyInput('identifier');
+                }
+
+                Auth::login($user, $request->boolean('remember'));
                 $request->session()->regenerate();
 
                 return redirect()->intended(route('dashboard'));
             }
         }
 
-        // Otherwise or if email attempt failed, try login by WhatsApp number
-        $user = null;
         if (Schema::hasColumn('users', 'whatsapp')) {
             // Normalize WhatsApp input: remove non-digits/+, convert leading 0 to +62, add + if starts with 62
             $wa = $identifier;
@@ -61,13 +65,19 @@ class AuthenticatedSessionController extends Controller
             }
 
             $user = User::where('whatsapp', $wa)->first();
-        }
 
-        if ($user && Hash::check($password, $user->password)) {
-            Auth::login($user, $request->boolean('remember'));
-            $request->session()->regenerate();
+            if ($user && Hash::check($password, $user->password)) {
+                if ($user->hasPendingRegistrationOtp()) {
+                    return back()->withErrors([
+                        'identifier' => 'Akun belum diverifikasi. Silakan cek email OTP terlebih dahulu.',
+                    ])->onlyInput('identifier');
+                }
 
-            return redirect()->intended(route('dashboard'));
+                Auth::login($user, $request->boolean('remember'));
+                $request->session()->regenerate();
+
+                return redirect()->intended(route('dashboard'));
+            }
         }
 
         return back()->withErrors([
