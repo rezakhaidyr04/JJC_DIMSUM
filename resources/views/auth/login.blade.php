@@ -259,6 +259,26 @@
             outline: none;
         }
 
+        .auth-reset {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -8px;
+            margin-bottom: 18px;
+        }
+
+        .auth-reset a {
+            color: var(--brand-red);
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .auth-reset a:hover,
+        .auth-reset a:focus {
+            color: #b2212e;
+            text-decoration: underline;
+        }
+
         .form-control.is-invalid {
             border-color: var(--brand-red);
             box-shadow: none;
@@ -496,6 +516,10 @@
                             <div class="form-check">
                                 <input type="checkbox" id="remember" name="remember" class="form-check-input">
                                 <label class="form-check-label" for="remember">Ingat saya</label>
+                            </div>
+
+                            <div class="auth-reset">
+                                <a href="{{ route('password.request') }}">Lupa password?</a>
                             </div>
 
                             <button type="submit" class="btn btn-brand">MASUK</button>
