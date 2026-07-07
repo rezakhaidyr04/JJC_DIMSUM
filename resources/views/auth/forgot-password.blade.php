@@ -1,97 +1,416 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lupa Password - Jajanan Cikampek</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Forgot Password - Cikampek Jajanan</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --brand-primary-dark: #8f1b24;
-            --brand-surface: rgba(255, 255, 255, 0.2);
-            --brand-border: rgba(255, 255, 255, 0.24);
-            --brand-text: #ffffff;
-            --brand-muted: rgba(255, 255, 255, 0.86);
+            --brand-yellow: #ffd400;
+            --brand-red: #c62833;
+            --brand-red-dark: #8f1b24;
+            --text-main: #221b16;
+            --text-soft: #6f6155;
+            --panel: #fff3cc;
+            --field-bg: #fff9e8;
+            --field-border: #d4bf92;
+            --field-border-focus: #ffcf00;
         }
+
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; min-height: 100vh; overflow-x: hidden; background: #0f1720; }
-        .login-wrapper { min-height: 100vh; display: flex; }
-        .login-left { flex: 1; position: relative; overflow: hidden; }
-        .login-left::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,0,0,0.18), rgba(0,0,0,0.42)); z-index: 1; }
-        .login-left img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-        .login-right { width: min(100%, 460px); display: flex; align-items: center; justify-content: center; padding: 32px 24px; background: linear-gradient(180deg, #3f474f 0%, #2f363e 100%); position: relative; }
-        .login-right::before,
-        .login-right::after { content: ''; position: absolute; border-radius: 50%; filter: blur(2px); pointer-events: none; }
-        .login-right::before { width: 220px; height: 220px; background: radial-gradient(circle, rgba(181,31,45,0.16) 0%, rgba(181,31,45,0) 72%); top: -60px; right: -90px; }
-        .login-right::after { width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 72%); bottom: -120px; left: -100px; }
-        .auth-container { width: 100%; max-width: 380px; position: relative; z-index: 2; }
-        .auth-logo-section { text-align: center; margin-bottom: 18px; }
-        .page-header-logo { width: 78px; height: 78px; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.88); box-shadow: 0 12px 26px rgba(0,0,0,0.25); background: #fff; margin-bottom: 14px; }
-        .auth-subtitle { color: var(--brand-text); font-size: 1.22rem; font-weight: 800; letter-spacing: 0.8px; margin: 0 0 8px; }
-        .auth-description { color: var(--brand-muted); font-size: 0.92rem; line-height: 1.65; margin: 0; }
-        .auth-card { background: var(--brand-surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--brand-border); border-radius: 22px; box-shadow: 0 18px 42px rgba(0,0,0,0.18); overflow: hidden; }
-        .auth-body { padding: 28px 26px 26px; }
-        .alert { border: none; border-radius: 14px; font-size: 0.9rem; }
-        .alert-info { background: rgba(255,255,255,0.16); color: #fff; }
-        .alert-danger { background: rgba(181,31,45,0.16); color: #fff; }
-        .form-group { margin-bottom: 18px; }
-        .form-label { color: #fff; font-weight: 700; font-size: 0.94rem; margin-bottom: 8px; }
-        .form-control { border-radius: 14px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.92); color: #1f2937; padding: 14px 15px; font-size: 0.94rem; }
-        .form-control:focus { border-color: #f0b0b7; box-shadow: 0 0 0 0.2rem rgba(181,31,45,0.18); background: #fff; }
-        .invalid-feedback { display: block; color: #ffd5d8; font-size: 0.82rem; margin-top: 6px; }
-        .btn-brand { width: 100%; border: none; border-radius: 14px; padding: 14px 16px; background: linear-gradient(180deg, #c61f2f 0%, var(--brand-primary-dark) 100%); color: #fff; font-weight: 800; font-size: 0.98rem; letter-spacing: 0.7px; margin-top: 8px; }
-        .btn-brand:hover,
-        .btn-brand:focus { color: #fff; transform: translateY(-1px); box-shadow: 0 10px 22px rgba(143, 27, 36, 0.28); }
-        .auth-foot { text-align: center; color: #eef2f7; font-size: 0.9rem; margin-top: 18px; }
-        .auth-foot a { color: #fff; font-weight: 700; text-decoration: none; }
-        .auth-foot a:hover,
-        .auth-foot a:focus { text-decoration: underline; }
-        @media (max-width: 991.98px) { .login-wrapper { flex-direction: column; } .login-left { min-height: 260px; } .login-right { width: 100%; min-height: calc(100vh - 260px); } }
-        @media (max-width: 575.98px) { .login-left { min-height: 210px; } .auth-body { padding: 24px 18px 20px; } .login-right { padding: 24px 16px; } }
+
+        html {
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            display: flex;
+            padding: 0;
+        }
+
+        .login-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100dvh;
+            background: url('{{ asset('images/login-bg.jpeg') }}') center center / cover no-repeat;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .login-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(24, 12, 12, 0.26), rgba(24, 12, 12, 0.12));
+            z-index: -1;
+        }
+
+        .login-left {
+            display: none;
+        }
+
+        .login-left::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .login-left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            position: relative;
+            z-index: 0;
+        }
+
+        .login-right {
+            flex: 1;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 30px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-logo-section {
+            text-align: center;
+            margin-bottom: 0;
+            padding: 14px 16px 4px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.20);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .page-header-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--brand-red);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            object-fit: contain;
+            display: inline-block;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(198, 40, 51, 0.2);
+        }
+
+        .auth-title {
+            margin: 0 0 8px;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--text-main);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-subtitle {
+            margin: 0 0 8px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        .auth-description {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.5;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.16);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
+
+        .auth-head {
+            background: rgba(198, 40, 51, 0.82);
+            color: #ffffff;
+            text-align: center;
+            padding: 24px;
+            border-bottom: none;
+        }
+
+        .auth-head h1 {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-head p {
+            margin: 6px 0 0;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .auth-body {
+            padding: 28px;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            color: #ffffff;
+            font-size: 0.92rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: block;
+            letter-spacing: 0.3px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
+            padding: 11px 13px;
+            min-height: 44px;
+            font-size: 0.92rem;
+            background: rgba(255, 255, 255, 0.88);
+            color: var(--text-main);
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--brand-red);
+            box-shadow: 0 0 0 3px rgba(198, 40, 51, 0.1);
+            background: #ffffff;
+        }
+
+        .form-control::placeholder {
+            color: #b8b8b8;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--brand-red);
+            box-shadow: none;
+        }
+
+        .invalid-feedback {
+            color: var(--brand-red);
+            font-size: 0.82rem;
+            margin-top: 4px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .btn-brand {
+            width: 100%;
+            border: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--brand-red) 0%, var(--brand-red-dark) 100%);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 13px 16px;
+            min-height: 46px;
+            font-size: 0.98rem;
+            box-shadow: 0 4px 14px rgba(198, 40, 51, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-brand:hover {
+            background: linear-gradient(135deg, #a91f26 0%, #6f1419 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(198, 40, 51, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-brand:active {
+            transform: translateY(0);
+        }
+
+        .alert-success {
+            border: 1.5px solid rgba(34, 197, 94, 0.28);
+            background: rgba(34, 197, 94, 0.12);
+            color: #ecfdf5;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+        }
+
+        .alert-success strong {
+            color: #bbf7d0;
+        }
+
+        .auth-foot {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.28);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 0.88rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .auth-foot a {
+            color: var(--brand-red);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .auth-foot a:hover {
+            text-decoration: underline;
+            color: var(--brand-red-dark);
+        }
+
+        @media (max-width: 991.98px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+
+            .login-left {
+                min-height: 220px;
+            }
+
+            .login-right {
+                padding: 28px 20px;
+            }
+
+            .auth-container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-left {
+                min-height: 180px;
+            }
+
+            .page-header-logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .auth-title {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .login-left {
+                display: none;
+            }
+
+            .login-right {
+                padding: 18px 12px;
+                justify-content: flex-start;
+            }
+
+            .auth-body {
+                padding: 20px 16px;
+            }
+
+            .form-label {
+                font-size: 0.88rem;
+            }
+
+            .btn-brand {
+                font-size: 0.92rem;
+                letter-spacing: 0.3px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="login-wrapper">
-        <div class="login-left"><img src="{{ asset('images/login-bg.jpeg') }}" alt="Cikampek Jajanan"></div>
+        <div class="login-left">
+            <img src="{{ asset('images/login-bg.jpeg') }}" alt="Cikampek Jajanan">
+        </div>
+
         <div class="login-right">
             <div class="auth-container">
                 <div class="auth-logo-section">
                     <img src="{{ asset('images/logo-login.png') }}" alt="Logo Jajanan Cikampek" class="page-header-logo">
                     <p class="auth-subtitle">RESET PASSWORD</p>
-                    <p class="auth-description">Masukkan email atau nomor WhatsApp yang terdaftar. Kami akan kirim tautan reset ke email akun Anda.</p>
+                    <p class="auth-description">Masukkan email atau nomor WhatsApp yang terdaftar untuk menerima tautan reset password.</p>
                 </div>
+
                 <div class="auth-card">
                     <div class="auth-body">
                         @if (session('status'))
-                            <div class="alert alert-info">{{ session('status') }}</div>
-                        @endif
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <strong>Permintaan gagal.</strong>
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                            <div class="alert alert-success">
+                                {{ session('status') }}
                             </div>
                         @endif
+
                         <form method="POST" action="{{ route('password.email') }}">
                             @csrf
+
                             <div class="form-group">
-                                <label for="identifier" class="form-label">Email atau Nomor WhatsApp</label>
-                                <input type="text" id="identifier" name="identifier" value="{{ old('identifier') }}" class="form-control @error('identifier') is-invalid @enderror" placeholder="Masukkan email atau WhatsApp terdaftar" required autofocus>
-                                @error('identifier')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <label for="email" class="form-label">Email atau Nomor WhatsApp</label>
+                                <input type="text" id="email" name="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror" placeholder="Masukkan email atau nomor WhatsApp" required autofocus>
+                                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
+
                             <button type="submit" class="btn btn-brand">KIRIM TAUTAN RESET</button>
                         </form>
-                        <div class="auth-foot"><a href="{{ route('login') }}">Kembali ke login</a></div>
+
+                        <div class="auth-foot">
+                            <a href="{{ route('login') }}">Kembali ke Login</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

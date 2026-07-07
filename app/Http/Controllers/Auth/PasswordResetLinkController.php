@@ -19,18 +19,22 @@ class PasswordResetLinkController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'identifier' => ['required', 'string', 'max:255'],
+        $request->merge([
+            'email' => $request->input('email', $request->input('identifier')),
         ]);
 
-        $user = $this->resolveUser($data['identifier']);
+        $data = $request->validate([
+            'email' => ['required', 'string', 'max:255'],
+        ]);
+
+        $user = $this->resolveUser($data['email']);
 
         if (! $user || blank($user->email)) {
             return redirect()->route('password.request')
                 ->withErrors([
-                    'identifier' => 'Akun tidak ditemukan atau belum memiliki email untuk reset password.',
+                    'email' => 'Akun tidak ditemukan atau belum memiliki email untuk reset password.',
                 ])
-                ->onlyInput('identifier');
+                ->onlyInput('email');
         }
 
         $status = Password::sendResetLink([
@@ -40,9 +44,9 @@ class PasswordResetLinkController extends Controller
         if ($status !== Password::RESET_LINK_SENT) {
             return redirect()->route('password.request')
                 ->withErrors([
-                    'identifier' => __($status),
+                    'email' => __($status),
                 ])
-                ->onlyInput('identifier');
+                ->onlyInput('email');
         }
 
         return redirect()->route('password.request')->with('status', 'Tautan reset password sudah dikirim ke email terdaftar.');
